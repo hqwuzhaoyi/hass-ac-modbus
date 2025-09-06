@@ -109,3 +109,33 @@ Thumbs.db
 config/modbus-config-discovered.json
 config/modbus-config-analyzed.json
 config/enhanced-scan-config.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+ENV/
+env/
+build/
+dist/
+*.egg-info/
+# pipenv
+Pipfile.lock
+
+# pytest
+.pytest_cache/
+
+# Coverage
+htmlcov/
+coverage.xml
+
+# Local env files
+local_settings.py
+
+# VS Code workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
