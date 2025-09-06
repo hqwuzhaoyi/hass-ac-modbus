@@ -4,76 +4,114 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Home Assistant Air Conditioning Modbus Integration - A Node.js tool for connecting and controlling Modbus protocol air conditioners with Home Assistant integration via MQTT. The project consists of two main parts:
+Home Assistant Air Conditioning Modbus Integration - A modern TypeScript/Next.js system for real-time monitoring and control of Modbus air conditioners with intelligent register discovery. Features both basic monitoring and advanced AI-powered register analysis.
 
-1. **Main Node.js application** (`src/`) - Core Modbus communication, scanning, and MQTT bridge
-2. **Next.js web interface** (`ac-monitor-nextjs/`) - Modern web-based monitoring dashboard
+**Architecture:**
+1. **Next.js Full-Stack App** - Modern web interface with real-time monitoring
+2. **WebSocket Servers** - Multiple server modes (basic/enhanced/demo) for different use cases  
+3. **Enhanced Scanning System** - AI-powered register discovery with parallel processing
+4. **Real-time Change Tracking** - Monitor register changes as you operate the AC remotely
 
 ## Common Commands
 
 ### Main Application
-- `npm install` - Install dependencies for main app
-- `npm start` - Start all services (monitor + MQTT bridge)
-- `npm run dev` - Start WebSocket server + Next.js dev server
-- `npm run ws` - Start WebSocket server only
-- `npm run test` - Test Modbus connection
+- `npm install` - Install all dependencies
+- `npm run dev` - Start complete development environment (WebSocket + Next.js)
+- `npm start` - Start Next.js production server (port 3002)
+- `npm run build` - Build Next.js production bundle
+- `npm run lint` - Run Next.js linting
+- `npm test` - Run Jest tests
 
-### Scanning Commands (Optimized)
+### WebSocket Server Modes
+- `npm run ws` - Basic WebSocket server with known registers
+- `npm run ws:enhanced` - Enhanced server with real Modbus device integration
+- `npm run ws:demo` - Demo server with simulated data for testing
+- `npm run monitor` - Alias for basic WebSocket server
+
+### Scanning Commands (AI-Powered)
 - `npm run scan` - Basic Modbus register scan
 - `npm run scan:enhanced` - Enhanced parallel scan with intelligent analysis
 - `npm run scan:smart` - Smart optimized scan with adaptive algorithms
 - `npm run scan:stats` - View scan history and statistics
 - `npm run scan:compare` - Compare different scanning strategies
-- `npm run bridge` - Start MQTT bridge to Home Assistant
-- `npm run monitor` - Start web monitoring interface
 
-### Next.js Web Interface
-- `cd ac-monitor-nextjs && npm install` - Install Next.js dependencies
-- `cd ac-monitor-nextjs && npm run dev` - Start Next.js dev server on port 3002
-- `cd ac-monitor-nextjs && npm run build` - Build production Next.js app
-- `cd ac-monitor-nextjs && npm run full` - Start both WebSocket server and Next.js dev server
+### MQTT & Integration
+- `npm run bridge` - Start MQTT bridge to Home Assistant
 
 ## Architecture
 
-### Core Components (src/)
-- **index.js** - Main application entry point with command-line interface
-- **modbus-scanner.js** - Scans Modbus registers to discover air conditioner parameters
-- **modbus-client.js** - Low-level Modbus TCP communication client
-- **data-analyzer.js** - AI-powered analysis of scan results to identify temperature, mode, fan speed registers
-- **mqtt-bridge.js** - Publishes air conditioner state to MQTT for Home Assistant auto-discovery
-- **web-monitor.js** - Express-based web monitoring interface with WebSocket support
-- **packet-capture.js** - Network packet capture for protocol analysis
+### WebSocket Server Layer
+- **server.js** - Basic WebSocket server with known registers (11 registers)
+- **server-enhanced-simple.js** - Enhanced server with intelligent register discovery
+- **server-demo.js** - Demo server with simulated AC data for testing and development
+- **lib/modbus-client.ts** - Core Modbus communication client with real-time monitoring
+- **lib/enhanced-monitor.ts** - Advanced monitoring with dynamic register discovery
+
+### Next.js Frontend
+- **app/page.tsx** - Basic monitoring dashboard 
+- **app/enhanced/page.tsx** - Advanced monitoring with AI-powered register discovery
+- **components/register-monitor.tsx** - Basic real-time register monitoring component
+- **components/enhanced-register-monitor.tsx** - Advanced tabbed interface with intelligent features
+- **components/ui/** - Radix UI components with Tailwind CSS styling
+- **types/modbus.ts** - TypeScript type definitions
+
+### AI-Powered Scanning System
+- **lib/enhanced-scanner.ts** - Parallel scanning with adaptive batch sizing and intelligent analysis
+- **lib/scan-optimizer.ts** - Historical scan analysis and optimization recommendations  
+- **examples/enhanced-scanning-example.ts** - Complete usage examples with progress tracking
+- **scripts/smart-scan.ts** - CLI tool for performance comparison and optimization
+
+### Legacy Components (src/)
+- **modbus-scanner.js** - Original sequential scanner
+- **data-analyzer.js** - Pattern recognition for register types
+- **mqtt-bridge.js** - Home Assistant MQTT integration
+- **packet-capture.js** - Network analysis tools
 
 ### Configuration System
-- **config/modbus-config.json** - Main configuration with connection settings and known register mappings
-- **config/modbus-config-discovered.json** - Generated after scanning with discovered registers
-- **config/modbus-config-analyzed.json** - Final configuration after AI analysis
+- **config/modbus-config.json** - Base configuration with known register mappings
+- **config/enhanced-scan-config.json** - Generated by AI analysis
 - **.env** - Environment variables (copy from .env.example)
 
-### Next.js Frontend (ac-monitor-nextjs/)
-- **app/page.tsx** - Main dashboard page with real-time monitoring
-- **app/api/modbus/** - API routes for Modbus operations (connect, read, write, scan)
-- **components/ui/** - Reusable UI components using Radix UI and Tailwind
-- **lib/modbus-client.ts** - TypeScript Modbus client for frontend
-- **server.js** - WebSocket server for real-time communication
+### Data Flow Architecture
 
-### Data Flow
-1. **Discovery Phase**: Scanner finds responsive registers → Analyzer identifies parameter types → Updated config generated
-2. **Runtime Phase**: Web monitor provides real-time interface → MQTT bridge publishes to Home Assistant → Both use ModbusClient for communication
+**Real-time Monitoring Flow:**
+1. **WebSocket Server** connects to Modbus device (or demo simulation)
+2. **Continuous Polling** reads known registers every 2 seconds
+3. **Change Detection** compares new values with cached previous values
+4. **WebSocket Broadcast** sends changes to all connected web clients
+5. **UI Updates** display register changes with timestamps in real-time
+
+**Enhanced Discovery Flow:**
+1. **Parallel Scanning** across multiple address ranges (1000-2200)
+2. **Pattern Recognition** analyzes values to identify register types (temperature/switch/control)
+3. **Confidence Scoring** rates reliability of discovered registers
+4. **Dynamic Registration** adds discovered registers to monitoring pool
+5. **Historical Learning** improves future scans based on success patterns
+
+### Key Technical Features
+
+**Real-time Change Tracking:**
+- Monitor register changes while operating AC remotely 
+- Identify unknown register functions through usage patterns
+- 50-entry change history with timestamps
+- Separate tracking for known vs dynamically discovered registers
+
+**Multiple Server Modes:**
+- **Demo Mode** (`npm run ws:demo`) - Simulated data with auto-changing temperature sensors
+- **Enhanced Mode** (`npm run ws:enhanced`) - Real Modbus integration with discovery
+- **Basic Mode** (`npm run ws`) - Simple monitoring of predefined registers
+
+**Web Interface Options:**
+- **Basic Monitor** (http://localhost:3002) - Simple register monitoring
+- **Enhanced Monitor** (http://localhost:3002/enhanced) - Tabbed interface with discovery tools
 
 ### Key Dependencies
+- **Next.js 14 + TypeScript** - Modern full-stack web framework
 - **modbus-serial** - Modbus TCP/RTU communication
-- **mqtt** - MQTT client for Home Assistant integration  
-- **express + ws** - Web interface with WebSocket support
+- **ws** - WebSocket server for real-time communication
+- **Radix UI + Tailwind CSS** - Modern component library and styling
+- **mqtt** - Home Assistant MQTT integration  
 - **winston** - Structured logging
-- **pcap** (optional) - Network packet capture
-- **Next.js + TypeScript** - Modern web frontend with type safety
-
-### Enhanced Scanning System
-- **lib/enhanced-scanner.ts** - Parallel scanning with adaptive batch sizing
-- **lib/scan-optimizer.ts** - Intelligent scan optimization with history analysis
-- **examples/enhanced-scanning-example.ts** - Complete usage examples
-- **scripts/smart-scan.ts** - CLI tool for optimized scanning
 
 ## Development Notes
 
