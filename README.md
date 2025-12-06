@@ -1,6 +1,6 @@
 # Home Assistant Air Conditioning Modbus Integration
 
-基于 Next.js 的现代化空调 Modbus 集成系统，提供 Web 监控界面和 Home Assistant 集成。
+基于 Next.js 的空调 Modbus 控制台，当前聚焦核心寄存器（1033 总开关 / 1041 主机模式）的手动读写。
 
 ## 🌟 特性
 
@@ -32,12 +32,11 @@ cp .env.example .env
 ### 3. 启动开发服务器
 
 ```bash
-# 启动完整服务（WebSocket + Next.js）
-npm run dev
+# 启动 WebSocket 服务器（仅 1033/1041 手动读写，热重载）
+npm run ws:dev
 
-# 或分别启动
-npm run ws      # 仅启动 WebSocket 服务器
-npm start       # 仅启动 Next.js 应用
+# 启动 Next.js 前端
+npm run dev:web
 ```
 
 ### 4. 访问应用
@@ -47,29 +46,10 @@ npm start       # 仅启动 Next.js 应用
 
 ## 🎛️ 界面功能
 
-### 📋 已知寄存器控制
-- **总开关** (1033) - 主电源控制
-- **当前温度** (1027) - 实时温度显示
-- **设定温度** (1036) - 温度调节
-- **风速控制** (1042) - 风速百分比
-- **传感器数据** - 多个温度传感器
-
-### 📊 实时变化监控
-- 自动记录所有寄存器变化
-- 显示变化时间和数值对比
-- 最多保留50条变化记录
-- 自动滚动到最新变化
-
-### 🔧 手动操作
-- **读取寄存器** - 输入地址读取任意寄存器
-- **写入寄存器** - 手动设置寄存器值
-- **实时反馈** - 立即显示操作结果
-
-### 🔍 寄存器扫描
-- 扫描指定地址范围
-- 自动发现有效寄存器
-- 十六进制数值显示
-- 支持大范围扫描
+### 📋 当前功能
+- **总开关 (1033)**: 读写 0/1
+- **主机模式 (1041)**: 读写模式值（1 制冷 / 2 制热 / 3 通风 / 4 除湿）
+- 其他寄存器的扫描/监控功能已停用，等待后续抓包分析
 
 ## 📡 技术架构
 
@@ -93,12 +73,11 @@ npm start       # 仅启动 Next.js 应用
 
 ## 🔗 API 接口
 
-### Modbus 操作
+### Modbus 操作（精简后）
 - `POST /api/modbus/connect` - 连接 Modbus 设备
-- `GET /api/modbus/read` - 读取所有已知寄存器
-- `POST /api/modbus/read` - 读取指定寄存器
-- `POST /api/modbus/write` - 写入寄存器
-- `POST /api/modbus/scan` - 扫描寄存器范围
+- `GET /api/modbus/read` - 读取已知寄存器（1033/1041）
+- `POST /api/modbus/read` - 读取指定寄存器（仅 1033/1041）
+- `POST /api/modbus/write` - 写入寄存器（仅 1033/1041）
 
 ### WebSocket 消息
 - `connection` - 连接状态更新

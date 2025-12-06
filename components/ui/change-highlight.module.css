@@ -1,0 +1,73 @@
+.changeHighlight {
+  position: relative;
+  overflow: hidden;
+  animation: changeHighlightFade 3s ease-out forwards;
+}
+
+.changeHighlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 209, 102, 0.5), rgba(255, 145, 77, 0.2));
+  opacity: 0;
+  animation: changeHighlightGlow 900ms ease-out forwards;
+}
+
+.playback {
+  background: rgba(96, 165, 250, 0.12);
+  border-left: 4px solid rgba(37, 99, 235, 0.8);
+}
+
+.realTime {
+  border-left: 4px solid rgba(249, 115, 22, 0.8);
+}
+
+.badge {
+  font-size: 0.75rem;
+  border-radius: 9999px;
+  padding: 0.125rem 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.badgePlayback {
+  background: rgba(37, 99, 235, 0.1);
+  color: rgb(37, 99, 235);
+}
+
+.badgeRealtime {
+  background: rgba(251, 191, 36, 0.2);
+  color: rgb(194, 65, 12);
+}
+
+.latencyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.75rem;
+}
+
+.dependencyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+}
+
+@keyframes changeHighlightFade {
+  0% {
+    background-color: rgba(253, 230, 138, 0.8);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes changeHighlightGlow {
+  0% {
+    opacity: 0.9;
+    transform: translateX(-100%);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
