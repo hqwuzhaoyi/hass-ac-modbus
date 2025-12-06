@@ -1,5 +1,6 @@
 import { connect, MqttClient } from 'mqtt';
 import { EventEmitter } from 'events';
+import type { RegisterChangeEvent } from '../types/change-events';
 
 export interface MqttConfig {
   host: string;
@@ -315,5 +316,29 @@ export class MqttBridge extends EventEmitter {
 
   isConnected(): boolean {
     return this.connected;
+  }
+
+  async publishChangeEvent(event: RegisterChangeEvent, sessionId: string): Promise<void> {
+    if (!this.client || !this.connected) {
+      throw new Error('MQTT 客户端未连接');
+    }
+
+    const payload = {
+      sessionId,
+      register: event.registerAddress,
+      newValue: event.newValue,
+      oldValue: event.oldValue,
+      timestamp: event.timestamp,
+      changeType: event.changeType,
+      source: event.source,
+      batch: event.batch,
+      latency: event.latency ?? null,
+    };
+
+    await this.publish(`${this.config.topicPrefix}/changes`, JSON.stringify(payload));
+    await this.publish(
+      `${this.config.topicPrefix}/register/${event.registerAddress}`,
+      JSON.stringify(payload),
+    );
   }
 }

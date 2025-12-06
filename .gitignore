@@ -139,3 +139,9 @@ local_settings.py
 !.vscode/settings.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+.claude/
+.codex/
+.serena/
+.specify/
+.turbo/
