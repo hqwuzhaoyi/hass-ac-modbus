@@ -20,6 +20,7 @@ from custom_components.ac_modbus.const import (
 # Check if homeassistant is available
 try:
     from homeassistant.const import CONF_HOST, CONF_PORT
+
     HAS_HOMEASSISTANT = True
 except ImportError:
     HAS_HOMEASSISTANT = False
@@ -45,9 +46,7 @@ class TestHubConnection:
         assert hub.is_connected is False
 
     @pytest.mark.asyncio
-    async def test_hub_connect_success(
-        self, mock_modbus_client: MagicMock
-    ) -> None:
+    async def test_hub_connect_success(self, mock_modbus_client: MagicMock) -> None:
         """Test successful connection."""
         config = {
             CONF_HOST: "192.168.1.100",
@@ -81,9 +80,7 @@ class TestHubConnection:
             assert hub.is_connected is False
 
     @pytest.mark.asyncio
-    async def test_hub_disconnect(
-        self, mock_modbus_client: MagicMock
-    ) -> None:
+    async def test_hub_disconnect(self, mock_modbus_client: MagicMock) -> None:
         """Test disconnection."""
         config = {
             CONF_HOST: "192.168.1.100",
@@ -122,9 +119,7 @@ class TestHubReadOperations:
     """Test ModbusHub read operations."""
 
     @pytest.mark.asyncio
-    async def test_read_register_success(
-        self, mock_modbus_client: MagicMock
-    ) -> None:
+    async def test_read_register_success(self, mock_modbus_client: MagicMock) -> None:
         """Test successful register read."""
         config = {
             CONF_HOST: "192.168.1.100",
@@ -176,9 +171,7 @@ class TestHubReadOperations:
                 await hub.read_register(REGISTER_POWER)
 
     @pytest.mark.asyncio
-    async def test_read_multiple_registers(
-        self, mock_modbus_client: MagicMock
-    ) -> None:
+    async def test_read_multiple_registers(self, mock_modbus_client: MagicMock) -> None:
         """Test reading multiple registers."""
         config = {
             CONF_HOST: "192.168.1.100",
@@ -257,9 +250,7 @@ class TestHubWriteOperations:
             assert readback == 0
 
     @pytest.mark.asyncio
-    async def test_write_verify_mismatch(
-        self, mock_modbus_client: MagicMock
-    ) -> None:
+    async def test_write_verify_mismatch(self, mock_modbus_client: MagicMock) -> None:
         """Test write with readback mismatch."""
         config = {
             CONF_HOST: "192.168.1.100",
@@ -405,9 +396,7 @@ class TestHubErrorHandling:
             assert hub.last_error is not None
 
     @pytest.mark.asyncio
-    async def test_error_timestamp(
-        self, mock_modbus_client_error: MagicMock
-    ) -> None:
+    async def test_error_timestamp(self, mock_modbus_client_error: MagicMock) -> None:
         """Test that error timestamp is recorded."""
         config = {
             CONF_HOST: "192.168.1.100",

@@ -101,10 +101,14 @@ class ACModbusModeSelect:
             ValueError: If the option is not valid.
         """
         if option not in self._reverse_map:
-            raise ValueError(f"Option '{option}' is not valid. Valid options: {self.options}")
+            raise ValueError(
+                f"Option '{option}' is not valid. Valid options: {self.options}"
+            )
 
         register_value = self._reverse_map[option]
-        _LOGGER.debug("Setting AC mode to '%s' (register value: %d)", option, register_value)
+        _LOGGER.debug(
+            "Setting AC mode to '%s' (register value: %d)", option, register_value
+        )
 
         await self._coordinator.hub.write_register(
             address=REGISTER_MODE,
@@ -168,7 +172,9 @@ if HAS_HOMEASSISTANT:
                 raise ValueError(f"Option '{option}' is not valid")
 
             register_value = self._reverse_map[option]
-            _LOGGER.debug("Setting AC mode to '%s' (register value: %d)", option, register_value)
+            _LOGGER.debug(
+                "Setting AC mode to '%s' (register value: %d)", option, register_value
+            )
 
             await self._coordinator.hub.write_register(
                 address=REGISTER_MODE,

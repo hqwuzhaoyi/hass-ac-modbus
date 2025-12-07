@@ -48,7 +48,9 @@ def mock_hub(mock_modbus_responses: dict[int, int]) -> MagicMock:
 
 
 @pytest.fixture
-def mock_coordinator(mock_hub: MagicMock, mock_modbus_responses: dict[int, int]) -> ACModbusCoordinator:
+def mock_coordinator(
+    mock_hub: MagicMock, mock_modbus_responses: dict[int, int]
+) -> ACModbusCoordinator:
     """Create a mock coordinator with data."""
     coordinator = ACModbusCoordinator(
         hub=mock_hub,
@@ -73,7 +75,9 @@ def custom_mode_map() -> dict[int, str]:
 class TestModeMapDefaults:
     """Test mode map default configuration."""
 
-    def test_select_default_mode_map(self, mock_coordinator: ACModbusCoordinator) -> None:
+    def test_select_default_mode_map(
+        self, mock_coordinator: ACModbusCoordinator
+    ) -> None:
         """Test select uses default mode map."""
         select = ACModbusModeSelect(
             coordinator=mock_coordinator,
@@ -92,7 +96,9 @@ class TestModeMapDefaults:
         )
         assert select.mode_map == custom_mode_map
 
-    def test_select_options_from_mode_map(self, mock_coordinator: ACModbusCoordinator) -> None:
+    def test_select_options_from_mode_map(
+        self, mock_coordinator: ACModbusCoordinator
+    ) -> None:
         """Test select options are derived from mode map."""
         select = ACModbusModeSelect(
             coordinator=mock_coordinator,
@@ -107,7 +113,9 @@ class TestModeSelection:
 
     @pytest.mark.asyncio
     async def test_select_option(
-        self, mock_coordinator: ACModbusCoordinator, mock_modbus_responses: dict[int, int]
+        self,
+        mock_coordinator: ACModbusCoordinator,
+        mock_modbus_responses: dict[int, int],
     ) -> None:
         """Test selecting a mode."""
         select = ACModbusModeSelect(
@@ -125,7 +133,9 @@ class TestModeSelection:
 
     @pytest.mark.asyncio
     async def test_select_with_verify(
-        self, mock_coordinator: ACModbusCoordinator, mock_modbus_responses: dict[int, int]
+        self,
+        mock_coordinator: ACModbusCoordinator,
+        mock_modbus_responses: dict[int, int],
     ) -> None:
         """Test selecting mode with verification."""
         select = ACModbusModeSelect(
@@ -139,7 +149,9 @@ class TestModeSelection:
         call_kwargs = mock_coordinator.hub.write_register.call_args[1]
         assert call_kwargs.get("verify") is True
 
-    def test_select_invalid_mode_rejected(self, mock_coordinator: ACModbusCoordinator) -> None:
+    def test_select_invalid_mode_rejected(
+        self, mock_coordinator: ACModbusCoordinator
+    ) -> None:
         """Test that invalid mode is rejected."""
         select = ACModbusModeSelect(
             coordinator=mock_coordinator,
@@ -184,7 +196,9 @@ class TestCurrentMode:
         )
         assert select.current_option == "heat"
 
-    def test_current_option_unmapped_value(self, mock_coordinator: ACModbusCoordinator) -> None:
+    def test_current_option_unmapped_value(
+        self, mock_coordinator: ACModbusCoordinator
+    ) -> None:
         """Test current option for unmapped register value."""
         mock_coordinator._data[REGISTER_MODE] = 99  # Unmapped value
         select = ACModbusModeSelect(

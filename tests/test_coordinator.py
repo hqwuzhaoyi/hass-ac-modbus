@@ -33,7 +33,9 @@ from custom_components.ac_modbus.hub import ModbusHub
 
 
 @pytest.fixture
-def mock_hub(mock_modbus_client: MagicMock, mock_modbus_responses: dict[int, int]) -> MagicMock:
+def mock_hub(
+    mock_modbus_client: MagicMock, mock_modbus_responses: dict[int, int]
+) -> MagicMock:
     """Create a mock ModbusHub."""
     hub = MagicMock(spec=ModbusHub)
     hub.is_connected = True

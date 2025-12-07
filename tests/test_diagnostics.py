@@ -57,7 +57,9 @@ def mock_hub_with_error() -> MagicMock:
 
 
 @pytest.fixture
-def mock_coordinator(mock_hub: MagicMock, mock_modbus_responses: dict[int, int]) -> ACModbusCoordinator:
+def mock_coordinator(
+    mock_hub: MagicMock, mock_modbus_responses: dict[int, int]
+) -> ACModbusCoordinator:
     """Create a mock coordinator with data."""
     coordinator = ACModbusCoordinator(
         hub=mock_hub,
@@ -86,9 +88,7 @@ class TestDiagnosticsData:
         assert diagnostics["connection"]["connected"] is True
 
     @pytest.mark.asyncio
-    async def test_diagnostics_error_info(
-        self, mock_hub_with_error: MagicMock
-    ) -> None:
+    async def test_diagnostics_error_info(self, mock_hub_with_error: MagicMock) -> None:
         """Test diagnostics includes error information."""
         coordinator = ACModbusCoordinator(
             hub=mock_hub_with_error,

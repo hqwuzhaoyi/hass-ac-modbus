@@ -208,9 +208,7 @@ class TestScanRangeService:
         assert 1004 in result.results
 
     @pytest.mark.asyncio
-    async def test_scan_range_max_100_registers(
-        self, mock_hub: MagicMock
-    ) -> None:
+    async def test_scan_range_max_100_registers(self, mock_hub: MagicMock) -> None:
         """Test scan range is limited to 100 registers."""
         with pytest.raises(ValueError, match="100"):
             await async_handle_scan_range(
@@ -230,7 +228,9 @@ class TestScanRangeService:
         call_count = 0
         original_read = mock_hub.read_register
 
-        async def mock_read_with_failure(address: int, count: int = 1, unit_id: int | None = None):
+        async def mock_read_with_failure(
+            address: int, count: int = 1, unit_id: int | None = None
+        ):
             nonlocal call_count
             call_count += 1
             if address == 1001:

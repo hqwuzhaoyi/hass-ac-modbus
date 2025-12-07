@@ -19,7 +19,13 @@ from custom_components.ac_modbus.switch import ACModbusPowerSwitch
 
 # Check if homeassistant is available
 try:
-    from homeassistant.const import CONF_HOST, CONF_PORT, STATE_OFF, STATE_ON, STATE_UNAVAILABLE
+    from homeassistant.const import (
+        CONF_HOST,
+        CONF_PORT,
+        STATE_OFF,
+        STATE_ON,
+        STATE_UNAVAILABLE,
+    )
 
     HAS_HOMEASSISTANT = True
 except ImportError:
@@ -62,7 +68,9 @@ def mock_hub(mock_modbus_responses: dict[int, int]) -> MagicMock:
 
 
 @pytest.fixture
-def mock_coordinator(mock_hub: MagicMock, mock_modbus_responses: dict[int, int]) -> ACModbusCoordinator:
+def mock_coordinator(
+    mock_hub: MagicMock, mock_modbus_responses: dict[int, int]
+) -> ACModbusCoordinator:
     """Create a mock coordinator with data."""
     coordinator = ACModbusCoordinator(
         hub=mock_hub,
@@ -122,7 +130,9 @@ class TestSwitchControl:
 
     @pytest.mark.asyncio
     async def test_switch_turn_on(
-        self, mock_coordinator: ACModbusCoordinator, mock_modbus_responses: dict[int, int]
+        self,
+        mock_coordinator: ACModbusCoordinator,
+        mock_modbus_responses: dict[int, int],
     ) -> None:
         """Test turning on the switch."""
         mock_modbus_responses[REGISTER_POWER] = 0  # Start off
@@ -142,7 +152,9 @@ class TestSwitchControl:
 
     @pytest.mark.asyncio
     async def test_switch_turn_off(
-        self, mock_coordinator: ACModbusCoordinator, mock_modbus_responses: dict[int, int]
+        self,
+        mock_coordinator: ACModbusCoordinator,
+        mock_modbus_responses: dict[int, int],
     ) -> None:
         """Test turning off the switch."""
         mock_modbus_responses[REGISTER_POWER] = 1  # Start on
@@ -162,7 +174,9 @@ class TestSwitchControl:
 
     @pytest.mark.asyncio
     async def test_switch_turn_on_with_verify(
-        self, mock_coordinator: ACModbusCoordinator, mock_modbus_responses: dict[int, int]
+        self,
+        mock_coordinator: ACModbusCoordinator,
+        mock_modbus_responses: dict[int, int],
     ) -> None:
         """Test turning on with verification."""
         mock_modbus_responses[REGISTER_POWER] = 0

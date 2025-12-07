@@ -55,7 +55,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     try:
         connected = await hub.connect()
         if not connected:
-            _LOGGER.error("Failed to connect to Modbus device at %s:%s", hub.host, hub.port)
+            _LOGGER.error(
+                "Failed to connect to Modbus device at %s:%s", hub.host, hub.port
+            )
             return False
     except Exception as ex:
         _LOGGER.error("Error connecting to Modbus device: %s", ex)

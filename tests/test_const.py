@@ -133,7 +133,7 @@ class TestModeMap:
 
     def test_default_mode_map_has_all_modes(self) -> None:
         """Test DEFAULT_MODE_MAP has all standard modes."""
-        expected_modes = {"auto", "cool", "dry", "fan_only", "heat"}
+        expected_modes = {"cool", "heat", "fan_only", "dry"}
         actual_modes = set(DEFAULT_MODE_MAP.values())
         assert actual_modes == expected_modes
 
@@ -149,11 +149,10 @@ class TestModeMap:
 
     def test_default_mode_map_entries(self) -> None:
         """Test DEFAULT_MODE_MAP specific entries."""
-        assert DEFAULT_MODE_MAP[0] == "auto"
         assert DEFAULT_MODE_MAP[1] == "cool"
-        assert DEFAULT_MODE_MAP[2] == "dry"
+        assert DEFAULT_MODE_MAP[2] == "heat"
         assert DEFAULT_MODE_MAP[3] == "fan_only"
-        assert DEFAULT_MODE_MAP[4] == "heat"
+        assert DEFAULT_MODE_MAP[4] == "dry"
 
 
 class TestConstraints:

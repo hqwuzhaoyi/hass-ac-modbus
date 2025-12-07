@@ -214,6 +214,7 @@ if HAS_HOMEASSISTANT:
             self,
             hass: HomeAssistant,
             bypass_connection_validation,
+            auto_enable_custom_integrations,
         ) -> None:
             """Test that user flow shows the form."""
             result = await hass.config_entries.flow.async_init(
@@ -227,6 +228,7 @@ if HAS_HOMEASSISTANT:
             self,
             hass: HomeAssistant,
             bypass_connection_validation,
+            auto_enable_custom_integrations,
         ) -> None:
             """Test config flow with valid input creates entry."""
             result = await hass.config_entries.flow.async_init(
@@ -252,6 +254,7 @@ if HAS_HOMEASSISTANT:
         async def test_form_cannot_connect(
             self,
             hass: HomeAssistant,
+            auto_enable_custom_integrations,
         ) -> None:
             """Test config flow handles connection failure."""
             with patch(

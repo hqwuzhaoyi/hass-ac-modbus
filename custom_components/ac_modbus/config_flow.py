@@ -73,7 +73,10 @@ def validate_input(user_input: dict[str, Any]) -> dict[str, str]:
     # Validate poll interval (if provided)
     poll_interval = user_input.get(CONF_POLL_INTERVAL)
     if poll_interval is not None:
-        if not isinstance(poll_interval, (int, float)) or poll_interval < MIN_POLL_INTERVAL:
+        if (
+            not isinstance(poll_interval, (int, float))
+            or poll_interval < MIN_POLL_INTERVAL
+        ):
             errors["poll_interval"] = "poll_interval_too_low"
 
     # Validate timeout vs poll interval

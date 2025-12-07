@@ -25,14 +25,14 @@ DEFAULT_SCAN_STEP: Final = 1
 
 # Register addresses
 REGISTER_POWER: Final = 1033  # Power on/off (0=off, 1=on)
-REGISTER_MODE: Final = 1041   # Operating mode
+REGISTER_MODE: Final = 1041  # Operating mode
 
 # Mode map: register value -> mode name
 DEFAULT_MODE_MAP: Final = {
-    1: "cool",      # 制冷
-    2: "heat",      # 制热
+    1: "cool",  # 制冷
+    2: "heat",  # 制热
     3: "fan_only",  # 通风
-    4: "dry",       # 除湿
+    4: "dry",  # 除湿
 }
 
 # Constraints

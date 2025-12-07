@@ -10,7 +10,12 @@ import pytest
 
 def get_manifest_path() -> Path:
     """Get the path to manifest.json."""
-    return Path(__file__).parent.parent / "custom_components" / "ac_modbus" / "manifest.json"
+    return (
+        Path(__file__).parent.parent
+        / "custom_components"
+        / "ac_modbus"
+        / "manifest.json"
+    )
 
 
 class TestManifest:

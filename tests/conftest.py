@@ -38,6 +38,7 @@ from custom_components.ac_modbus.const import (
 try:
     from homeassistant.const import CONF_HOST, CONF_PORT
     from homeassistant.core import HomeAssistant
+
     HAS_HOMEASSISTANT = True
 except ImportError:
     HAS_HOMEASSISTANT = False
@@ -69,12 +70,14 @@ def mock_modbus_responses() -> dict[int, int]:
     """Return default mock Modbus register responses."""
     return {
         REGISTER_POWER: 1,  # Power ON
-        REGISTER_MODE: 1,   # Cool mode
+        REGISTER_MODE: 1,  # Cool mode
     }
 
 
 @pytest.fixture
-def mock_modbus_client(mock_modbus_responses: dict[int, int]) -> Generator[MagicMock, None, None]:
+def mock_modbus_client(
+    mock_modbus_responses: dict[int, int],
+) -> Generator[MagicMock, None, None]:
     """Create a mock Modbus client."""
     with patch("pymodbus.client.AsyncModbusTcpClient") as mock_client_class:
         mock_client = MagicMock()
@@ -191,6 +194,7 @@ def mock_modbus_client_error() -> Generator[MagicMock, None, None]:
 
 # HA-specific fixtures (only available when homeassistant is installed)
 if HAS_HOMEASSISTANT:
+
     @pytest.fixture
     def auto_enable_custom_integrations(enable_custom_integrations):
         """Enable custom integrations defined in the test dir."""

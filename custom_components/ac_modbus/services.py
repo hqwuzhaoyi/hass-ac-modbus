@@ -206,10 +206,12 @@ async def async_handle_scan_range(
             _LOGGER.debug("Scanned register %d: %d", address, value)
         except Exception as ex:
             _LOGGER.warning("Failed to read register %d: %s", address, ex)
-            result.errors.append({
-                ATTR_REGISTER: address,
-                ATTR_ERROR: str(ex),
-            })
+            result.errors.append(
+                {
+                    ATTR_REGISTER: address,
+                    ATTR_ERROR: str(ex),
+                }
+            )
 
     _LOGGER.info(
         "scan_range completed: %d successful, %d errors",

@@ -8,7 +8,9 @@ from pathlib import Path
 import pytest
 
 
-TRANSLATIONS_DIR = Path(__file__).parent.parent / "custom_components" / "ac_modbus" / "translations"
+TRANSLATIONS_DIR = (
+    Path(__file__).parent.parent / "custom_components" / "ac_modbus" / "translations"
+)
 
 
 def load_translation(lang: str) -> dict:
@@ -63,7 +65,9 @@ class TestTranslationKeysComplete:
                 full_path = f"{path}.{key}" if path else key
                 if key not in zh_dict:
                     missing.append(full_path)
-                elif isinstance(en_dict[key], dict) and isinstance(zh_dict.get(key), dict):
+                elif isinstance(en_dict[key], dict) and isinstance(
+                    zh_dict.get(key), dict
+                ):
                     missing.extend(check_keys(en_dict[key], zh_dict[key], full_path))
             return missing
 
@@ -134,7 +138,7 @@ class TestChineseTranslation:
         title = translations["config"]["step"]["user"]["title"]
 
         # Check for Chinese characters (CJK Unified Ideographs range)
-        has_chinese = any('\u4e00' <= char <= '\u9fff' for char in title)
+        has_chinese = any("\u4e00" <= char <= "\u9fff" for char in title)
         assert has_chinese, f"Title '{title}' should contain Chinese characters"
 
     def test_zh_config_step_user_title(self) -> None:
@@ -169,6 +173,7 @@ class TestTranslationFormat:
 
     def test_no_empty_strings(self) -> None:
         """Test no empty strings in translations."""
+
         def check_empty(d: dict, path: str = "") -> list[str]:
             """Find empty strings in dict."""
             empty = []

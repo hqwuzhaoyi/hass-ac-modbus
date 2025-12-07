@@ -244,10 +244,7 @@ class TestConcurrentRequests:
 
         # Launch multiple concurrent refreshes
         start_time = time.monotonic()
-        await asyncio.gather(*[
-            coordinator.async_refresh()
-            for _ in range(10)
-        ])
+        await asyncio.gather(*[coordinator.async_refresh() for _ in range(10)])
         elapsed = time.monotonic() - start_time
 
         # Should complete in reasonable time (not serialized)
@@ -264,13 +261,15 @@ class TestConcurrentRequests:
         start_time = time.monotonic()
 
         # Launch concurrent writes
-        await asyncio.gather(*[
-            mock_hub.write_register(
-                address=REGISTER_POWER,
-                value=i % 2,
-            )
-            for i in range(10)
-        ])
+        await asyncio.gather(
+            *[
+                mock_hub.write_register(
+                    address=REGISTER_POWER,
+                    value=i % 2,
+                )
+                for i in range(10)
+            ]
+        )
 
         elapsed = time.monotonic() - start_time
 

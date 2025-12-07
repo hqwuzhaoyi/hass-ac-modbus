@@ -163,7 +163,9 @@ class ModbusHub:
 
                 _LOGGER.debug(
                     "Connecting to Modbus device at %s:%s (unit_id=%s)",
-                    self._host, self._port, self._unit_id
+                    self._host,
+                    self._port,
+                    self._unit_id,
                 )
 
                 # Connect with timeout
@@ -180,13 +182,17 @@ class ModbusHub:
 
                 _LOGGER.info(
                     "Connected to Modbus device at %s:%s (unit_id=%s)",
-                    self._host, self._port, self._unit_id
+                    self._host,
+                    self._port,
+                    self._unit_id,
                 )
 
                 # Test connection with a simple read
                 try:
                     test_result = await asyncio.wait_for(
-                        self._client.read_holding_registers(1033, count=1, device_id=self._unit_id),
+                        self._client.read_holding_registers(
+                            1033, count=1, device_id=self._unit_id
+                        ),
                         timeout=self._timeout,
                     )
                     if test_result.isError():
@@ -236,7 +242,9 @@ class ModbusHub:
         Returns:
             True if reconnection successful, False otherwise.
         """
-        _LOGGER.debug("Attempting to reconnect (backoff count: %d)", self._backoff_count)
+        _LOGGER.debug(
+            "Attempting to reconnect (backoff count: %d)", self._backoff_count
+        )
 
         # Apply backoff delay
         if self._backoff_count > 0:
@@ -273,7 +281,7 @@ class ModbusHub:
             The result from the modbus call.
         """
         method = getattr(self._client, method_name)
-        slave = kwargs.pop('slave', self._unit_id)
+        slave = kwargs.pop("slave", self._unit_id)
 
         # Try different API formats for pymodbus version compatibility
         attempts = [
@@ -333,7 +341,7 @@ class ModbusHub:
         try:
             async with self._lock:
                 result = await self._call_modbus(
-                    'read_holding_registers',
+                    "read_holding_registers",
                     address,
                     count=count,
                     slave=slave,
@@ -397,7 +405,7 @@ class ModbusHub:
         try:
             async with self._lock:
                 result = await self._call_modbus(
-                    'write_register',
+                    "write_register",
                     address,
                     value=value,
                     slave=slave,

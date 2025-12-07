@@ -230,9 +230,7 @@ class TestMultiUnitId:
     """Test multi-device (unit_id) support."""
 
     @pytest.mark.asyncio
-    async def test_hub_custom_unit_id(
-        self, mock_hub: MagicMock
-    ) -> None:
+    async def test_hub_custom_unit_id(self, mock_hub: MagicMock) -> None:
         """Test hub supports custom unit_id."""
         await mock_hub.write_register(
             address=REGISTER_POWER,
@@ -282,9 +280,7 @@ class TestMultiUnitId:
 class TestConfigurationExtensions:
     """Test configuration extension points."""
 
-    def test_poll_interval_configurable(
-        self, mock_hub: MagicMock
-    ) -> None:
+    def test_poll_interval_configurable(self, mock_hub: MagicMock) -> None:
         """Test poll interval is configurable."""
         custom_interval = 30
 
@@ -295,9 +291,7 @@ class TestConfigurationExtensions:
 
         assert coordinator.poll_interval == custom_interval
 
-    def test_coordinator_registers_configurable(
-        self, mock_hub: MagicMock
-    ) -> None:
+    def test_coordinator_registers_configurable(self, mock_hub: MagicMock) -> None:
         """Test coordinator registers list is modifiable."""
         coordinator = ACModbusCoordinator(
             hub=mock_hub,
@@ -319,9 +313,7 @@ class TestConfigurationExtensions:
 class TestBackwardsCompatibility:
     """Test backwards compatibility features."""
 
-    def test_default_values_used(
-        self, mock_hub: MagicMock
-    ) -> None:
+    def test_default_values_used(self, mock_hub: MagicMock) -> None:
         """Test default values are used when not specified."""
         coordinator = ACModbusCoordinator(
             hub=mock_hub,

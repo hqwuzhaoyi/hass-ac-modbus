@@ -90,6 +90,7 @@ class TestPartialReadFailure:
         self, mock_hub: MagicMock, mock_modbus_responses: dict[int, int]
     ) -> None:
         """Test coordinator handles 1041 read failure while 1033 succeeds."""
+
         async def mock_read_partial_fail(
             address: int, count: int = 1, unit_id: int | None = None
         ):
@@ -142,7 +143,10 @@ class TestPartialReadFailure:
 
         # Third refresh - should recover
         await coordinator.async_refresh()
-        assert coordinator.get_register(REGISTER_POWER) == mock_modbus_responses[REGISTER_POWER]
+        assert (
+            coordinator.get_register(REGISTER_POWER)
+            == mock_modbus_responses[REGISTER_POWER]
+        )
 
 
 class TestDeviceRestartRecovery:
@@ -187,9 +191,7 @@ class TestDeviceRestartRecovery:
     ) -> None:
         """Test that connection lost triggers reconnect attempt."""
         mock_hub.is_connected = False
-        mock_hub.read_register = AsyncMock(
-            side_effect=ConnectionError("Not connected")
-        )
+        mock_hub.read_register = AsyncMock(side_effect=ConnectionError("Not connected"))
 
         coordinator = ACModbusCoordinator(
             hub=mock_hub,
@@ -243,13 +245,9 @@ class TestNetworkIntermittent:
         assert first_result == third_result
 
     @pytest.mark.asyncio
-    async def test_consecutive_timeouts_backoff(
-        self, mock_hub: MagicMock
-    ) -> None:
+    async def test_consecutive_timeouts_backoff(self, mock_hub: MagicMock) -> None:
         """Test backoff strategy on consecutive timeouts."""
-        mock_hub.read_register = AsyncMock(
-            side_effect=TimeoutError("Network timeout")
-        )
+        mock_hub.read_register = AsyncMock(side_effect=TimeoutError("Network timeout"))
 
         coordinator = ACModbusCoordinator(
             hub=mock_hub,
