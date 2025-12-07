@@ -4,6 +4,8 @@
 [![GitHub Release](https://img.shields.io/github/v/release/wuzhaoyi/hass-ac-modbus)](https://github.com/wuzhaoyi/hass-ac-modbus/releases)
 [![License](https://img.shields.io/github/license/wuzhaoyi/hass-ac-modbus)](LICENSE)
 
+English | [简体中文](README.zh-CN.md)
+
 Home Assistant custom integration for controlling air conditioners via Modbus TCP protocol.
 
 ## Features
