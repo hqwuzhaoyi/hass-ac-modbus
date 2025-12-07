@@ -1,6 +1,6 @@
 # Tasks: Home Assistant 自定义集成 (TDD 优先)
 
-**Input**: Design documents from `/Users/wuzhaoyi/workspace/opensource/hass-ac-modbus/specs/002-ha-integration-plan/`
+**Input**: Design documents from `/Users/hqwuzhaoyi/workspace/opensource/hass-ac-modbus/specs/002-ha-integration-plan/`
 **Spec Reference**: spec.md (FR-001~FR-019, NFR-001~NFR-005, SC-001~SC-012)
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/, docs/testing-guide.md
 

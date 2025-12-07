@@ -1,8 +1,8 @@
 # AC Modbus - Home Assistant Custom Integration
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
-[![GitHub Release](https://img.shields.io/github/v/release/wuzhaoyi/hass-ac-modbus)](https://github.com/wuzhaoyi/hass-ac-modbus/releases)
-[![License](https://img.shields.io/github/license/wuzhaoyi/hass-ac-modbus)](LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/hqwuzhaoyi/hass-ac-modbus)](https://github.com/hqwuzhaoyi/hass-ac-modbus/releases)
+[![License](https://img.shields.io/github/license/hqwuzhaoyi/hass-ac-modbus)](LICENSE)
 
 English | [简体中文](README.zh-CN.md)
 
@@ -34,7 +34,7 @@ Home Assistant custom integration for controlling air conditioners via Modbus TC
    - Open HACS in Home Assistant
    - Click on the three dots in the top right corner
    - Select **Custom repositories**
-   - Add the repository URL: `https://github.com/wuzhaoyi/hass-ac-modbus`
+   - Add the repository URL: `https://github.com/hqwuzhaoyi/hass-ac-modbus`
    - Select **Integration** as the category
    - Click **Add**
 
@@ -46,7 +46,7 @@ Home Assistant custom integration for controlling air conditioners via Modbus TC
 
 ### Manual Installation
 
-1. Download the latest release from the [releases page](https://github.com/wuzhaoyi/hass-ac-modbus/releases)
+1. Download the latest release from the [releases page](https://github.com/hqwuzhaoyi/hass-ac-modbus/releases)
 
 2. Extract and copy the `custom_components/ac_modbus` folder to your Home Assistant's `custom_components` directory:
    ```

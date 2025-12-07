@@ -1,8 +1,8 @@
 # AC Modbus - Home Assistant 自定义集成
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
-[![GitHub Release](https://img.shields.io/github/v/release/wuzhaoyi/hass-ac-modbus)](https://github.com/wuzhaoyi/hass-ac-modbus/releases)
-[![License](https://img.shields.io/github/license/wuzhaoyi/hass-ac-modbus)](LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/hqwuzhaoyi/hass-ac-modbus)](https://github.com/hqwuzhaoyi/hass-ac-modbus/releases)
+[![License](https://img.shields.io/github/license/hqwuzhaoyi/hass-ac-modbus)](LICENSE)
 
 [English](README.md) | 简体中文
 
@@ -34,7 +34,7 @@
    - 打开 Home Assistant 中的 HACS
    - 点击右上角的三个点
    - 选择 **自定义存储库**
-   - 添加仓库 URL：`https://github.com/wuzhaoyi/hass-ac-modbus`
+   - 添加仓库 URL：`https://github.com/hqwuzhaoyi/hass-ac-modbus`
    - 类别选择 **Integration**
    - 点击 **添加**
 
@@ -46,7 +46,7 @@
 
 ### 手动安装
 
-1. 从 [releases 页面](https://github.com/wuzhaoyi/hass-ac-modbus/releases) 下载最新版本
+1. 从 [releases 页面](https://github.com/hqwuzhaoyi/hass-ac-modbus/releases) 下载最新版本
 
 2. 解压并将 `custom_components/ac_modbus` 文件夹复制到 Home Assistant 的 `custom_components` 目录：
    ```
