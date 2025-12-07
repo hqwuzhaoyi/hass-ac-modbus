@@ -4,8 +4,8 @@
   "codeowners": ["@hqwuzhaoyi"],
   "config_flow": true,
   "documentation": "https://github.com/hqwuzhaoyi/hass-ac-modbus",
-  "issue_tracker": "https://github.com/hqwuzhaoyi/hass-ac-modbus/issues",
   "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/hqwuzhaoyi/hass-ac-modbus/issues",
   "requirements": ["pymodbus>=3.6.0"],
   "version": "0.1.0"
 }

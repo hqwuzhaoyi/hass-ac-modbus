@@ -224,8 +224,8 @@ async def async_handle_scan_range(
 
 # Check if homeassistant is available
 try:
-    from homeassistant.core import HomeAssistant, ServiceCall
     import voluptuous as vol
+    from homeassistant.core import HomeAssistant, ServiceCall
     from homeassistant.helpers import config_validation as cv
 
     HAS_HOMEASSISTANT = True

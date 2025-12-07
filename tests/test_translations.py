@@ -7,7 +7,6 @@ from pathlib import Path
 
 import pytest
 
-
 TRANSLATIONS_DIR = (
     Path(__file__).parent.parent / "custom_components" / "ac_modbus" / "translations"
 )

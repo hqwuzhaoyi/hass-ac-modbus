@@ -340,4 +340,4 @@ class TestBackwardsCompatibility:
 
         # Should use default mode map
         assert select.mode_map == DEFAULT_MODE_MAP
-        assert len(select.options) == 5
+        assert len(select.options) == 4

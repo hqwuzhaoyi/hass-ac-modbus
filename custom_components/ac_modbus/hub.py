@@ -33,7 +33,7 @@ except ImportError:
 # Check if pymodbus is available
 try:
     from pymodbus.client import AsyncModbusTcpClient
-    from pymodbus.exceptions import ModbusException, ConnectionException
+    from pymodbus.exceptions import ConnectionException, ModbusException
 
     HAS_PYMODBUS = True
 except ImportError:
