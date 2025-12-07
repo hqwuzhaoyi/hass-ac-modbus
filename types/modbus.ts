@@ -27,7 +27,16 @@ export interface ModbusConnection {
 }
 
 export interface WebSocketMessage {
-  type: 'connection' | 'register_update' | 'register_change' | 'bulk_update' | 'error' | 'read_response' | 'write_response' | 'scan_response';
+  type:
+    | 'connection'
+    | 'register_update'
+    | 'register_change'
+    | 'dynamic_register_change'
+    | 'bulk_update'
+    | 'error'
+    | 'read_response'
+    | 'write_response'
+    | 'scan_response';
   data?: any;
   timestamp: string;
   address?: number;

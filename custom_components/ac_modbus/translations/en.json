@@ -1,0 +1,115 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "AC Modbus Setup",
+        "description": "Configure your Modbus air conditioner connection.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "unit_id": "Unit ID",
+          "poll_interval": "Poll Interval (seconds)",
+          "timeout": "Timeout (seconds)"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the Modbus device",
+          "port": "Modbus TCP port (default: 502)",
+          "unit_id": "Modbus slave/unit ID (default: 1)",
+          "poll_interval": "How often to poll the device (minimum: 5 seconds)",
+          "timeout": "Connection timeout (must be less than poll interval)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the Modbus device",
+      "invalid_host": "Invalid host address",
+      "invalid_port": "Port must be between 1 and 65535",
+      "poll_interval_too_low": "Poll interval must be at least 5 seconds",
+      "timeout_exceeds_poll": "Timeout must be less than poll interval",
+      "unknown": "An unexpected error occurred"
+    },
+    "abort": {
+      "already_configured": "This device is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "AC Modbus Options",
+        "data": {
+          "poll_interval": "Poll Interval (seconds)",
+          "timeout": "Timeout (seconds)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "power": {
+        "name": "Power"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Mode",
+        "state": {
+          "auto": "Auto",
+          "cool": "Cool",
+          "dry": "Dry",
+          "fan_only": "Fan Only",
+          "heat": "Heat"
+        }
+      }
+    }
+  },
+  "services": {
+    "write_register": {
+      "name": "Write Register",
+      "description": "Write a value to a Modbus register",
+      "fields": {
+        "register": {
+          "name": "Register",
+          "description": "Register address to write to"
+        },
+        "value": {
+          "name": "Value",
+          "description": "Value to write"
+        },
+        "unit_id": {
+          "name": "Unit ID",
+          "description": "Modbus unit/slave ID (optional)"
+        },
+        "verify": {
+          "name": "Verify",
+          "description": "Verify the write with a readback"
+        },
+        "expected": {
+          "name": "Expected Value",
+          "description": "Expected readback value (optional)"
+        }
+      }
+    },
+    "scan_range": {
+      "name": "Scan Range",
+      "description": "Scan a range of Modbus registers",
+      "fields": {
+        "start": {
+          "name": "Start",
+          "description": "Start register address"
+        },
+        "end": {
+          "name": "End",
+          "description": "End register address"
+        },
+        "step": {
+          "name": "Step",
+          "description": "Step between registers"
+        },
+        "unit_id": {
+          "name": "Unit ID",
+          "description": "Modbus unit/slave ID (optional)"
+        }
+      }
+    }
+  }
+}

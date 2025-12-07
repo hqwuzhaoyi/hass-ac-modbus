@@ -7,10 +7,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Home Assistant Air Conditioning Modbus Integration - A modern TypeScript/Next.js system for real-time monitoring and control of Modbus air conditioners with intelligent register discovery. Features both basic monitoring and advanced AI-powered register analysis.
 
 **Architecture:**
-1. **Next.js Full-Stack App** - Modern web interface with real-time monitoring
-2. **WebSocket Servers** - Multiple server modes (basic/enhanced/demo) for different use cases  
-3. **Enhanced Scanning System** - AI-powered register discovery with parallel processing
-4. **Real-time Change Tracking** - Monitor register changes as you operate the AC remotely
+1. **Next.js Full-Stack App** - Modern web interface with core control (1033/1041)
+2. **WebSocket Server** - 单一模式，聚焦核心寄存器读写（已禁用轮询/扫描）
+3. **Enhanced Scanning System** -（暂不使用）AI-powered register discovery with parallel processing
+4. **Real-time Change Tracking** -（已下线）此前用于寄存器变化监控
 
 ## Common Commands
 
@@ -22,15 +22,13 @@ Home Assistant Air Conditioning Modbus Integration - A modern TypeScript/Next.js
 - `npm run lint` - Run Next.js linting
 - `npm test` - Run Jest tests
 
-### WebSocket Server Modes
-- `npm run ws` - Basic WebSocket server with known registers
-- `npm run ws:enhanced` - Enhanced server with real Modbus device integration
-- `npm run ws:demo` - Demo server with simulated data for testing
-- `npm run monitor` - Alias for basic WebSocket server
+### WebSocket Server
+- `npm run ws` - WebSocket server (ts-node) for core registers 1033/1041
+- `npm run ws:dev` - 热重载模式（nodemon + ts-node，watch server.ts/lib）
+- `npm run monitor` - Alias for `npm run ws`
 
-### Scanning Commands (AI-Powered)
+### Scanning Commands (已暂存)
 - `npm run scan` - Basic Modbus register scan
-- `npm run scan:enhanced` - Enhanced parallel scan with intelligent analysis
 - `npm run scan:smart` - Smart optimized scan with adaptive algorithms
 - `npm run scan:stats` - View scan history and statistics
 - `npm run scan:compare` - Compare different scanning strategies
@@ -38,28 +36,35 @@ Home Assistant Air Conditioning Modbus Integration - A modern TypeScript/Next.js
 ### MQTT & Integration
 - `npm run bridge` - Start MQTT bridge to Home Assistant
 
+## Realtime Change Detection Overview
+
+- **UI Components**: `components/real-time-change-monitor.tsx` streams `change_notification`, `buffer_stats`, `dependency_status`, `latency_metrics`; `components/change-history-panel.tsx` renders playback badges、缓冲利用率与依赖健康状态。
+- **Server Modes**: `npm run ws`, `npm run ws:enhanced`, `npm run ws:demo` 均已集成新的 change-detector 管道，Demo 模式会模拟 `playback` 事件与依赖监控。
+- **Core Libraries**: `lib/change-detector.ts`, `lib/change-event-manager.ts`, `lib/monitoring-session.ts`, `lib/dependency-monitors.ts`, `lib/change-websocket-handler.ts` 负责分层延迟计算、缓冲队列、依赖告警、批次序列号。
+- **MQTT 输出**: 若配置 `MQTT_HOST` 等环境变量，`lib/modbus-client.ts` 会通过 `lib/mqtt-bridge.ts` 将 `changes` 主题推送到 Home Assistant。
+
+## Validation Shortcuts
+
+- `npm test` - 运行全部 Jest 套件，覆盖合约测试、集成测试、性能预算、缓冲/依赖场景。
+- `__tests__/unit/` - 独立验证 change-detector、websocket handler、monitoring session 行为。
+- `__tests__/integration/` - 覆盖实时工作流、三模式兼容性、缓冲回放、依赖监控等关键路径。
+- Quickstart 中的 “Mode Validation Playbook” 列出三种 WebSocket 模式的人工巡检步骤。
+
 ## Architecture
 
 ### WebSocket Server Layer
-- **server.js** - Basic WebSocket server with known registers (11 registers)
-- **server-enhanced-simple.js** - Enhanced server with intelligent register discovery
-- **server-demo.js** - Demo server with simulated AC data for testing and development
-- **lib/modbus-client.ts** - Core Modbus communication client with real-time monitoring
-- **lib/enhanced-monitor.ts** - Advanced monitoring with dynamic register discovery
+- **server.ts** - WebSocket server (TS) focused on registers 1033/1041; no polling/scanning
+- **lib/modbus-client.ts** - Core Modbus communication client; monitoring disabled when pollingInterval<=0
+- **lib/enhanced-monitor.ts** - Advanced monitoring with dynamic register discovery（暂未启用）
 
 ### Next.js Frontend
-- **app/page.tsx** - Basic monitoring dashboard 
-- **app/enhanced/page.tsx** - Advanced monitoring with AI-powered register discovery
-- **components/register-monitor.tsx** - Basic real-time register monitoring component
-- **components/enhanced-register-monitor.tsx** - Advanced tabbed interface with intelligent features
+- **app/page.tsx** - 核心控制面板（1033/1041）
+- **components/register-monitor.tsx** - 核心寄存器读写组件
 - **components/ui/** - Radix UI components with Tailwind CSS styling
 - **types/modbus.ts** - TypeScript type definitions
 
-### AI-Powered Scanning System
-- **lib/enhanced-scanner.ts** - Parallel scanning with adaptive batch sizing and intelligent analysis
-- **lib/scan-optimizer.ts** - Historical scan analysis and optimization recommendations  
-- **examples/enhanced-scanning-example.ts** - Complete usage examples with progress tracking
-- **scripts/smart-scan.ts** - CLI tool for performance comparison and optimization
+### AI-Powered Scanning System（保留代码，暂不使用）
+- **lib/enhanced-scanner.ts**, **lib/scan-optimizer.ts**, **examples/enhanced-scanning-example.ts**, **scripts/smart-scan.ts**
 
 ### Legacy Components (src/)
 - **modbus-scanner.js** - Original sequential scanner
@@ -68,42 +73,15 @@ Home Assistant Air Conditioning Modbus Integration - A modern TypeScript/Next.js
 - **packet-capture.js** - Network analysis tools
 
 ### Configuration System
-- **config/modbus-config.json** - Base configuration with known register mappings
-- **config/enhanced-scan-config.json** - Generated by AI analysis
 - **.env** - Environment variables (copy from .env.example)
+- 其余扫描/发现相关配置文件暂未使用
 
 ### Data Flow Architecture
 
-**Real-time Monitoring Flow:**
-1. **WebSocket Server** connects to Modbus device (or demo simulation)
-2. **Continuous Polling** reads known registers every 2 seconds
-3. **Change Detection** compares new values with cached previous values
-4. **WebSocket Broadcast** sends changes to all connected web clients
-5. **UI Updates** display register changes with timestamps in real-time
-
-**Enhanced Discovery Flow:**
-1. **Parallel Scanning** across multiple address ranges (1000-2200)
-2. **Pattern Recognition** analyzes values to identify register types (temperature/switch/control)
-3. **Confidence Scoring** rates reliability of discovered registers
-4. **Dynamic Registration** adds discovered registers to monitoring pool
-5. **Historical Learning** improves future scans based on success patterns
-
-### Key Technical Features
-
-**Real-time Change Tracking:**
-- Monitor register changes while operating AC remotely 
-- Identify unknown register functions through usage patterns
-- 50-entry change history with timestamps
-- Separate tracking for known vs dynamically discovered registers
-
-**Multiple Server Modes:**
-- **Demo Mode** (`npm run ws:demo`) - Simulated data with auto-changing temperature sensors
-- **Enhanced Mode** (`npm run ws:enhanced`) - Real Modbus integration with discovery
-- **Basic Mode** (`npm run ws`) - Simple monitoring of predefined registers
-
-**Web Interface Options:**
-- **Basic Monitor** (http://localhost:3002) - Simple register monitoring
-- **Enhanced Monitor** (http://localhost:3002/enhanced) - Tabbed interface with discovery tools
+**简化控制流：**
+1. WebSocket Server 连接 Modbus
+2. 按需手动读写寄存器 1033/1041
+3. 无轮询、无变化追踪、无动态发现
 
 ### Key Dependencies
 - **Next.js 14 + TypeScript** - Modern full-stack web framework

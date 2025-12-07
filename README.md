@@ -1,186 +1,241 @@
-# Home Assistant Air Conditioning Modbus Integration
+# AC Modbus - Home Assistant Custom Integration
 
-基于 Next.js 的现代化空调 Modbus 集成系统，提供 Web 监控界面和 Home Assistant 集成。
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/v/release/hqwuzhaoyi/hass-ac-modbus)](https://github.com/hqwuzhaoyi/hass-ac-modbus/releases)
+[![License](https://img.shields.io/github/license/hqwuzhaoyi/hass-ac-modbus)](LICENSE)
 
-## 🌟 特性
+English | [简体中文](README.zh-CN.md)
 
-- **现代化 Web 界面**: 基于 Next.js + TypeScript + Tailwind CSS 
-- **实时监控**: WebSocket 连接实现实时数据更新
-- **Modbus 通信**: 支持 TCP 方式连接空调设备
-- **Home Assistant 集成**: 自动发现和 MQTT 桥接
-- **智能扫描**: 自动发现和分析寄存器
-- **TypeScript 支持**: 完整的类型定义和智能提示
+Home Assistant custom integration for controlling air conditioners via Modbus TCP protocol.
 
-## 🚀 快速开始
+## Features
 
-### 1. 安装依赖
+- Control AC power on/off via Modbus register
+- Select AC operating mode (Cool, Heat, Fan Only, Dry)
+- Automatic polling with configurable interval
+- Diagnostic tools for debugging
+- Custom services for advanced Modbus operations
+- Multi-language support (English, Chinese)
+
+## Supported Registers
+
+| Register | Function | Values |
+|----------|----------|--------|
+| 1033 | Power | 0=Off, 1=On |
+| 1041 | Mode | 1=Cool, 2=Heat, 3=Fan Only, 4=Dry |
+
+## Installation
+
+### HACS Installation (Recommended)
+
+1. Make sure [HACS](https://hacs.xyz/) is installed in your Home Assistant instance
+
+2. Add this repository as a custom repository in HACS:
+   - Open HACS in Home Assistant
+   - Click on the three dots in the top right corner
+   - Select **Custom repositories**
+   - Add the repository URL: `https://github.com/hqwuzhaoyi/hass-ac-modbus`
+   - Select **Integration** as the category
+   - Click **Add**
+
+3. Search for "AC Modbus" in HACS and install it
+
+4. Restart Home Assistant
+
+5. Go to **Settings** > **Devices & Services** > **Add Integration** and search for "AC Modbus"
+
+### Manual Installation
+
+1. Download the latest release from the [releases page](https://github.com/hqwuzhaoyi/hass-ac-modbus/releases)
+
+2. Extract and copy the `custom_components/ac_modbus` folder to your Home Assistant's `custom_components` directory:
+   ```
+   <config>/custom_components/ac_modbus/
+   ```
+
+3. Restart Home Assistant
+
+4. Go to **Settings** > **Devices & Services** > **Add Integration** and search for "AC Modbus"
+
+## Configuration
+
+### Through UI (Config Flow)
+
+1. Go to **Settings** > **Devices & Services**
+2. Click **Add Integration**
+3. Search for "AC Modbus"
+4. Enter the configuration:
+   - **Host**: IP address of your Modbus device (e.g., `192.168.1.100`)
+   - **Port**: Modbus TCP port (default: `502`)
+   - **Unit ID**: Modbus slave unit ID (default: `1`)
+   - **Poll Interval**: Data refresh interval in seconds (default: `10`, minimum: `5`)
+
+## Entities Created
+
+After successful configuration, the following entities will be created:
+
+| Entity | Type | Description |
+|--------|------|-------------|
+| `switch.ac_modbus_power` | Switch | Control AC power on/off |
+| `select.ac_modbus_mode` | Select | Select AC operating mode |
+
+## Services
+
+### `ac_modbus.write_register`
+
+Write a value to a specific Modbus register.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `register` | int | Yes | Register address |
+| `value` | int | Yes | Value to write |
+
+Example:
+```yaml
+service: ac_modbus.write_register
+data:
+  register: 1033
+  value: 1
+```
+
+### `ac_modbus.scan_range`
+
+Scan a range of Modbus registers for debugging.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `start` | int | Yes | Start register address |
+| `end` | int | Yes | End register address |
+| `step` | int | No | Step size (default: 1) |
+
+Example:
+```yaml
+service: ac_modbus.scan_range
+data:
+  start: 1030
+  end: 1050
+  step: 1
+```
+
+## Diagnostics
+
+The integration provides diagnostic information accessible through Home Assistant's diagnostics feature:
+- Connection status
+- Register values
+- Configuration details
+- Error counts
+
+## Troubleshooting
+
+### Connection Issues
+
+1. Verify the Modbus device is reachable:
+   ```bash
+   ping <device_ip>
+   ```
+
+2. Check if port 502 is accessible:
+   ```bash
+   nc -zv <device_ip> 502
+   ```
+
+3. Ensure no other application is connected to the Modbus device (many devices only support single connections)
+
+### Mode Not Updating
+
+If the mode selector doesn't show the correct value:
+1. Go to **Settings** > **Devices & Services**
+2. Find the AC Modbus integration
+3. Click the three dots and select **Reload**
+
+### Enable Debug Logging
+
+Add the following to your `configuration.yaml`:
+```yaml
+logger:
+  default: warning
+  logs:
+    custom_components.ac_modbus: debug
+```
+
+## Requirements
+
+- Home Assistant 2024.12.0 or newer
+- Python package: `pymodbus>=3.6.0` (automatically installed)
+
+## Development
+
+### Running Tests
 
 ```bash
-npm install
-# 或
-pnpm install
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements_test.txt
+
+# Run tests
+pytest
 ```
 
-### 2. 配置环境
+### Project Structure
 
-复制 `.env.example` 到 `.env` 并修改配置：
-
-```bash
-cp .env.example .env
 ```
-
-### 3. 启动开发服务器
-
-```bash
-# 启动完整服务（WebSocket + Next.js）
-npm run dev
-
-# 或分别启动
-npm run ws      # 仅启动 WebSocket 服务器
-npm start       # 仅启动 Next.js 应用
+custom_components/ac_modbus/
+├── __init__.py          # Integration setup
+├── config_flow.py       # UI configuration flow
+├── const.py             # Constants and default values
+├── coordinator.py       # Data update coordinator
+├── diagnostics.py       # Diagnostic data provider
+├── hub.py               # Modbus communication hub
+├── manifest.json        # Integration manifest
+├── select.py            # Mode select entity
+├── services.py          # Custom services
+├── services.yaml        # Service definitions
+├── switch.py            # Power switch entity
+└── translations/        # Localization files
+    ├── en.json
+    └── zh-Hans.json
 ```
-
-### 4. 访问应用
-
-- Web 界面: http://localhost:3002
-- WebSocket: ws://localhost:3003
-
-## 🎛️ 界面功能
-
-### 📋 已知寄存器控制
-- **总开关** (1033) - 主电源控制
-- **当前温度** (1027) - 实时温度显示
-- **设定温度** (1036) - 温度调节
-- **风速控制** (1042) - 风速百分比
-- **传感器数据** - 多个温度传感器
-
-### 📊 实时变化监控
-- 自动记录所有寄存器变化
-- 显示变化时间和数值对比
-- 最多保留50条变化记录
-- 自动滚动到最新变化
-
-### 🔧 手动操作
-- **读取寄存器** - 输入地址读取任意寄存器
-- **写入寄存器** - 手动设置寄存器值
-- **实时反馈** - 立即显示操作结果
-
-### 🔍 寄存器扫描
-- 扫描指定地址范围
-- 自动发现有效寄存器
-- 十六进制数值显示
-- 支持大范围扫描
-
-## 📡 技术架构
-
-### 前端
-- **Next.js 14** - React 全栈框架
-- **shadcn/ui** - 现代化 UI 组件库
-- **Tailwind CSS** - 样式框架
-- **TypeScript** - 类型安全
-- **Lucide React** - 图标库
-
-### 后端
-- **Next.js API Routes** - 服务端 API
-- **WebSocket** - 实时通信
-- **modbus-serial** - Modbus 协议支持
-- **Node.js** - 运行环境
-
-### 通信协议
-- **Modbus TCP** - 与空调设备通信
-- **WebSocket** - 前后端实时通信
-- **REST API** - HTTP 接口
-
-## 🔗 API 接口
-
-### Modbus 操作
-- `POST /api/modbus/connect` - 连接 Modbus 设备
-- `GET /api/modbus/read` - 读取所有已知寄存器
-- `POST /api/modbus/read` - 读取指定寄存器
-- `POST /api/modbus/write` - 写入寄存器
-- `POST /api/modbus/scan` - 扫描寄存器范围
-
-### WebSocket 消息
-- `connection` - 连接状态更新
-- `bulk_update` - 批量寄存器更新
-- `register_change` - 寄存器变化通知
-- `error` - 错误信息
-
-## ⚙️ 配置说明
-
-### 已知寄存器配置
-位于 `lib/modbus-client.ts` 的 `knownRegisters` 映射：
-
-```typescript
-[1033, { name: '总开关', type: 'switch', writable: true }],
-[1027, { name: '当前温度', type: 'temperature', scale: 0.1, unit: '°C' }],
-// ... 更多寄存器
-```
-
-### 连接参数
-- **Modbus Host**: 192.168.2.200
-- **Modbus Port**: 502
-- **Unit ID**: 1
-- **Web Port**: 3002
-- **WebSocket Port**: 3003
-
-## 📱 使用指南
-
-### 1. 基础操作
-1. 打开应用，等待自动连接
-2. 点击 "开始监控" 启动实时监控
-3. 使用开关控制设备开关
-4. 通过输入框调节温度等数值
-
-### 2. 发现新寄存器
-1. 使用扫描功能扫描 1030-1180 范围
-2. 观察扫描结果中的非零值
-3. 手动测试读写操作
-4. 记录有效的控制寄存器
-
-### 3. 监控变化
-1. 在变化监控面板查看实时变化
-2. 操作物理遥控器观察数值变化
-3. 根据变化模式推断寄存器功能
-
-### 4. 房间控制测试
-1. 逐一测试可写寄存器
-2. 观察对应房间的响应
-3. 建立房间与寄存器的映射关系
-
-## 🐛 故障排除
-
-### 连接问题
-- 检查网络连接到 192.168.2.200
-- 确认 Modbus 端口 502 可访问
-- 查看浏览器控制台错误信息
-
-### 数据异常
-- 重启应用重新连接
-- 检查寄存器配置是否正确
-- 使用手动读取验证寄存器状态
-
-### 性能优化
-- 调整监控频率（默认 2 秒）
-- 限制变化记录数量
-- 使用寄存器批量读取
-
-## 📄 许可证
-
-MIT License
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
 
 ---
 
-**现在就开始使用吧！** 🎉
+# Web Control Panel (Optional)
+
+This repository also includes a Next.js web application for direct Modbus control and debugging.
+
+## Web Features
+
+- Real-time WebSocket connection for monitoring
+- Manual register read/write interface
+- Register scanning tools
+
+## Quick Start (Web Panel)
 
 ```bash
-cd ac-monitor-nextjs
+# Install dependencies
 npm install
-node start.js
+
+# Start WebSocket server (manual read/write for 1033/1041)
+npm run ws:dev
+
+# Start Next.js frontend
+npm run dev:web
 ```
 
-然后访问 http://localhost:3002 开始监控你的4房间空调系统！
+Access the web interface at http://localhost:3002
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [Home Assistant](https://www.home-assistant.io/) - The open source home automation platform
+- [pymodbus](https://github.com/pymodbus-dev/pymodbus) - Modbus protocol implementation in Python
+- [HACS](https://hacs.xyz/) - Home Assistant Community Store

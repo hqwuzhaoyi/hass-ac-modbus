@@ -1,19 +1,20 @@
 {
   "name": "hass-ac-modbus",
   "version": "1.0.0",
+  "packageManager": "pnpm@8.6.2",
   "description": "Home Assistant Air Conditioning Modbus Integration with Next.js Monitor",
-  "main": "server.js",
+  "main": "server.ts",
   "scripts": {
-    "dev": "concurrently \"npm run ws\" \"next dev -p 3002\"",
+    "dev": "turbo run dev:web dev:ws --parallel",
+    "dev:web": "next dev -p 3002",
+    "dev:ws": "npm run ws:dev",
     "build": "next build",
     "start": "next start -p 3002",
     "lint": "next lint",
-    "ws": "node server.js",
-    "ws:enhanced": "node server-enhanced-simple.js",
-    "ws:demo": "node server-demo.js",
-    "full": "concurrently \"npm run ws\" \"npm run dev\"",
+    "ws": "ts-node --transpile-only --compiler-options '{\"module\":\"commonjs\",\"moduleResolution\":\"node\"}' server.ts",
+    "ws:dev": "nodemon --watch server.ts --watch lib --ext ts,js --exec \"ts-node --transpile-only --compiler-options '{\\\"module\\\":\\\"commonjs\\\",\\\"moduleResolution\\\":\\\"node\\\"}' server.ts\"",
+    "full": "npm run dev",
     "scan": "node -r ts-node/register lib/modbus-scanner.ts",
-    "scan:enhanced": "node -r ts-node/register examples/enhanced-scanning-example.ts",
     "scan:smart": "node -r ts-node/register scripts/smart-scan.ts scan",
     "scan:stats": "node -r ts-node/register scripts/smart-scan.ts stats",
     "scan:compare": "node -r ts-node/register scripts/smart-scan.ts compare",
@@ -22,7 +23,7 @@
     "test": "jest"
   },
   "keywords": ["homeassistant", "modbus", "air-conditioning", "mqtt", "nextjs", "typescript"],
-  "author": "Your Name",
+  "author": "hqwuzhaoyi",
   "license": "MIT",
   "dependencies": {
     "next": "14.0.0",
@@ -67,7 +68,8 @@
     "eslint-config-next": "14.0.0",
     "nodemon": "^3.0.2",
     "jest": "^29.7.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "turbo": "^2.0.6"
   },
   "optionalDependencies": {
     "pcap": "^3.0.0"
