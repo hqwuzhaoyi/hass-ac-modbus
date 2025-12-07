@@ -1,0 +1,59 @@
+[project]
+name = "ac_modbus"
+version = "0.1.0"
+description = "Home Assistant custom integration for Modbus air conditioners"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+python_files = "test_*.py"
+python_functions = "test_*"
+addopts = "-v"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["custom_components/ac_modbus"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
+fail_under = 85
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "ARG", # flake8-unused-arguments
+    "SIM", # flake8-simplify
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+]
+
+[tool.ruff.isort]
+known-first-party = ["custom_components.ac_modbus"]
+
+[tool.black]
+target-version = ["py312"]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+known_first_party = ["custom_components.ac_modbus"]

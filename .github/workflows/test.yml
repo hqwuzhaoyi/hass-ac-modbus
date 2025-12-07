@@ -1,0 +1,56 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'custom_components/**'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - 'requirements_test.txt'
+      - '.github/workflows/test.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'custom_components/**'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - 'requirements_test.txt'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.12']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements_test.txt
+          pip install voluptuous pymodbus
+
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ \
+            --cov=custom_components.ac_modbus \
+            --cov-report=xml \
+            --cov-report=term-missing \
+            --cov-fail-under=65 \
+            -v
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false

@@ -1,0 +1,115 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "空调 Modbus 设置",
+        "description": "配置您的 Modbus 空调连接。",
+        "data": {
+          "host": "主机地址",
+          "port": "端口",
+          "unit_id": "设备 ID",
+          "poll_interval": "轮询间隔（秒）",
+          "timeout": "超时时间（秒）"
+        },
+        "data_description": {
+          "host": "Modbus 设备的 IP 地址或主机名",
+          "port": "Modbus TCP 端口（默认：502）",
+          "unit_id": "Modbus 从站/设备 ID（默认：1）",
+          "poll_interval": "设备轮询频率（最小：5 秒）",
+          "timeout": "连接超时时间（必须小于轮询间隔）"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "无法连接到 Modbus 设备",
+      "invalid_host": "无效的主机地址",
+      "invalid_port": "端口必须在 1 到 65535 之间",
+      "poll_interval_too_low": "轮询间隔必须至少为 5 秒",
+      "timeout_exceeds_poll": "超时时间必须小于轮询间隔",
+      "unknown": "发生未知错误"
+    },
+    "abort": {
+      "already_configured": "此设备已配置"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "空调 Modbus 选项",
+        "data": {
+          "poll_interval": "轮询间隔（秒）",
+          "timeout": "超时时间（秒）"
+        }
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "power": {
+        "name": "电源"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "模式",
+        "state": {
+          "auto": "自动",
+          "cool": "制冷",
+          "dry": "除湿",
+          "fan_only": "送风",
+          "heat": "制热"
+        }
+      }
+    }
+  },
+  "services": {
+    "write_register": {
+      "name": "写入寄存器",
+      "description": "向 Modbus 寄存器写入值",
+      "fields": {
+        "register": {
+          "name": "寄存器",
+          "description": "要写入的寄存器地址"
+        },
+        "value": {
+          "name": "值",
+          "description": "要写入的值"
+        },
+        "unit_id": {
+          "name": "设备 ID",
+          "description": "Modbus 设备 ID（可选）"
+        },
+        "verify": {
+          "name": "验证",
+          "description": "通过回读验证写入"
+        },
+        "expected": {
+          "name": "期望值",
+          "description": "期望的回读值（可选）"
+        }
+      }
+    },
+    "scan_range": {
+      "name": "扫描范围",
+      "description": "扫描 Modbus 寄存器范围",
+      "fields": {
+        "start": {
+          "name": "起始",
+          "description": "起始寄存器地址"
+        },
+        "end": {
+          "name": "结束",
+          "description": "结束寄存器地址"
+        },
+        "step": {
+          "name": "步长",
+          "description": "寄存器间隔"
+        },
+        "unit_id": {
+          "name": "设备 ID",
+          "description": "Modbus 设备 ID（可选）"
+        }
+      }
+    }
+  }
+}

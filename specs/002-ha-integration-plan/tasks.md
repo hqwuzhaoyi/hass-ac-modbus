@@ -133,8 +133,8 @@
 
 **Goal**: 搭建测试环境，让所有测试可运行
 
-- [ ] **T100** [Setup] 创建项目结构 `custom_components/ac_modbus/` 目录
-- [ ] **T101** [Setup] 创建 `tests/` 目录结构
+- [x] **T100** [Setup] 创建项目结构 `custom_components/ac_modbus/` 目录
+- [x] **T101** [Setup] 创建 `tests/` 目录结构
   ```
   tests/
   ├── __init__.py
@@ -142,17 +142,17 @@
   ├── fixtures/
   └── (各模块测试文件待添加)
   ```
-- [ ] **T102** [Setup] 创建 `requirements_test.txt` 并安装依赖
+- [x] **T102** [Setup] 创建 `requirements_test.txt` 并安装依赖
   - pytest>=7.4.0
   - pytest-asyncio>=0.21.0
   - pytest-cov>=4.1.0
   - pytest-homeassistant-custom-component>=0.13.0
-- [ ] **T103** [Setup] 配置 `pytest.ini` 或 `pyproject.toml`
-- [ ] **T104** [Setup] 编写 `tests/conftest.py` 共享 fixtures
+- [x] **T103** [Setup] 配置 `pytest.ini` 或 `pyproject.toml`
+- [x] **T104** [Setup] 编写 `tests/conftest.py` 共享 fixtures
   - `mock_modbus_client` fixture
   - `mock_modbus_responses` fixture
   - `hass` fixture (from pytest-homeassistant)
-- [ ] **T105** [Setup] 验证测试环境：运行 `pytest --collect-only` 无错误
+- [x] **T105** [Setup] 验证测试环境：运行 `pytest --collect-only` 无错误
 
 **Checkpoint**: 测试基础设施就绪，可以开始 TDD 🎯
 
@@ -164,44 +164,44 @@
 
 ### Cycle 1.1: Manifest & Constants
 
-- [ ] **T110** 🔴 [Test] 编写 `tests/test_manifest.py`
+- [x] **T110** 🔴 [Test] 编写 `tests/test_manifest.py`
   - 测试 manifest.json 格式正确
   - 测试依赖声明完整
-- [ ] **T111** 🟢 [Impl] 创建 `manifest.json`
+- [x] **T111** 🟢 [Impl] 创建 `manifest.json`
   - domain: ac_modbus
   - dependencies: homeassistant, pymodbus
   - config_flow: true
-- [ ] **T112** 🔴 [Test] 编写 `tests/test_const.py`
+- [x] **T112** 🔴 [Test] 编写 `tests/test_const.py`
   - 测试常量定义完整（DOMAIN, 寄存器地址等）
-- [ ] **T113** 🟢 [Impl] 创建 `const.py` 定义所有常量
-- [ ] **T114** 🔵 [Refactor] 检查常量命名规范
+- [x] **T113** 🟢 [Impl] 创建 `const.py` 定义所有常量
+- [x] **T114** 🔵 [Refactor] 检查常量命名规范
 
 ### Cycle 1.2: Config Flow (TDD)
 
-- [ ] **T120** 🔴 [Test] 编写 `tests/test_config_flow.py` - 基础流程
+- [x] **T120** 🔴 [Test] 编写 `tests/test_config_flow.py` - 基础流程
   - `test_form_user_flow()` - UI 流程启动
   - `test_form_valid_input()` - 合法输入成功
   - `test_form_invalid_host()` - 无效 host 错误
   - `test_form_cannot_connect()` - 连接失败错误
-- [ ] **T121** 🟢 [Impl] 创建 `config_flow.py` - 让基础测试通过
+- [x] **T121** 🟢 [Impl] 创建 `config_flow.py` - 让基础测试通过
   - ConfigFlow 类骨架
   - async_step_user() 基础实现
-- [ ] **T122** 🔴 [Test] 编写 `tests/test_config_flow.py` - 输入验证
+- [x] **T122** 🔴 [Test] 编写 `tests/test_config_flow.py` - 输入验证
   - `test_poll_interval_too_low()` - < 5s 拒绝
   - `test_poll_interval_equals_timeout()` - timeout >= poll 拒绝
   - `test_invalid_port()` - 端口范围验证
-- [ ] **T123** 🟢 [Impl] 完善 `config_flow.py` - 添加输入验证
-- [ ] **T124** 🔵 [Refactor] 提取验证逻辑到独立函数
+- [x] **T123** 🟢 [Impl] 完善 `config_flow.py` - 添加输入验证
+- [x] **T124** 🔵 [Refactor] 提取验证逻辑到独立函数
 
 ### Cycle 1.3: Integration Setup
 
-- [ ] **T130** 🔴 [Test] 编写 `tests/test_init.py`
+- [x] **T130** 🔴 [Test] 编写 `tests/test_init.py`
   - `test_setup_entry()` - 配置条目加载
   - `test_unload_entry()` - 清理资源
-- [ ] **T131** 🟢 [Impl] 创建 `__init__.py`
+- [x] **T131** 🟢 [Impl] 创建 `__init__.py`
   - async_setup_entry() 骨架
   - async_unload_entry() 骨架
-- [ ] **T132** 🔵 [Refactor] 确保异步操作正确
+- [x] **T132** 🔵 [Refactor] 确保异步操作正确
 
 **Checkpoint M1**: ✅ 集成可在 HA 中加载，config flow 可用
 
@@ -222,89 +222,89 @@ pytest --cov=custom_components.ac_modbus --cov-report=term-missing
 
 ### Cycle 2.1: Modbus Hub (TDD)
 
-- [ ] **T200** 🔴 [Test] 编写 `tests/test_hub.py` - 连接管理
+- [x] **T200** 🔴 [Test] 编写 `tests/test_hub.py` - 连接管理
   - `test_hub_connect_success()` - 成功连接
   - `test_hub_connect_failure()` - 连接失败
   - `test_hub_disconnect()` - 断开连接
   - `test_hub_is_connected()` - 状态检查
-- [ ] **T201** 🟢 [Impl] 创建 `hub.py` - ModbusHub 类骨架
+- [x] **T201** 🟢 [Impl] 创建 `hub.py` - ModbusHub 类骨架
   - `__init__()`, `connect()`, `disconnect()`, `is_connected`
-- [ ] **T202** 🔴 [Test] 编写 `tests/test_hub.py` - 读操作
+- [x] **T202** 🔴 [Test] 编写 `tests/test_hub.py` - 读操作
   - `test_read_register_success()` - 成功读取
   - `test_read_register_timeout()` - 超时处理
   - `test_read_register_exception()` - 异常处理
   - `test_read_multiple_registers()` - 批量读取
-- [ ] **T203** 🟢 [Impl] 实现 `hub.py` - `read_register()` 方法
-- [ ] **T204** 🔴 [Test] 编写 `tests/test_hub.py` - 写操作
+- [x] **T203** 🟢 [Impl] 实现 `hub.py` - `read_register()` 方法
+- [x] **T204** 🔴 [Test] 编写 `tests/test_hub.py` - 写操作
   - `test_write_register_success()` - 成功写入
   - `test_write_register_timeout()` - 超时
   - `test_write_with_verify_success()` - 回读成功
   - `test_write_verify_mismatch()` - 回读不匹配
   - `test_write_verify_expected_value()` - 自定义期望值
-- [ ] **T205** 🟢 [Impl] 实现 `hub.py` - `write_register()` + 回读验证
-- [ ] **T206** 🔴 [Test] 编写 `tests/test_hub.py` - 重连机制
+- [x] **T205** 🟢 [Impl] 实现 `hub.py` - `write_register()` + 回读验证
+- [x] **T206** 🔴 [Test] 编写 `tests/test_hub.py` - 重连机制
   - `test_reconnect_on_connection_lost()` - 自动重连
   - `test_backoff_strategy()` - 回退策略
   - `test_reconnect_failure()` - 重连失败处理
-- [ ] **T207** 🟢 [Impl] 实现 `hub.py` - 重连与 backoff
-- [ ] **T208** 🔵 [Refactor] Hub 代码优化
+- [x] **T207** 🟢 [Impl] 实现 `hub.py` - 重连与 backoff
+- [x] **T208** 🔵 [Refactor] Hub 代码优化
   - 提取错误处理逻辑
   - 添加日志
   - 优化锁机制
 
 ### Cycle 2.2: DataUpdateCoordinator (TDD)
 
-- [ ] **T210** 🔴 [Test] 编写 `tests/test_coordinator.py` - 基础轮询
+- [x] **T210** 🔴 [Test] 编写 `tests/test_coordinator.py` - 基础轮询
   - `test_coordinator_initialization()` - 初始化
   - `test_coordinator_first_refresh()` - 首次刷新
   - `test_coordinator_periodic_update()` - 周期更新
-- [ ] **T211** 🟢 [Impl] 创建 `coordinator.py` - Coordinator 类骨架
-- [ ] **T212** 🔴 [Test] 编写 `tests/test_coordinator.py` - 数据缓存
+- [x] **T211** 🟢 [Impl] 创建 `coordinator.py` - Coordinator 类骨架
+- [x] **T212** 🔴 [Test] 编写 `tests/test_coordinator.py` - 数据缓存
   - `test_data_caching_1033_1041()` - 缓存 1033/1041
   - `test_cache_invalidation()` - 缓存失效
   - `test_stale_data_handling()` - 过期数据处理
-- [ ] **T213** 🟢 [Impl] 实现 `coordinator.py` - 缓存逻辑
-- [ ] **T214** 🔴 [Test] 编写 `tests/test_coordinator.py` - 错误处理
+- [x] **T213** 🟢 [Impl] 实现 `coordinator.py` - 缓存逻辑
+- [x] **T214** 🔴 [Test] 编写 `tests/test_coordinator.py` - 错误处理
   - `test_update_failed_marks_unavailable()` - 失败标记不可用
   - `test_update_success_restores_availability()` - 成功恢复可用
   - `test_consecutive_failures_backoff()` - 连续失败触发 backoff
-- [ ] **T215** 🟢 [Impl] 实现 `coordinator.py` - 错误处理与可用性
-- [ ] **T216** 🔵 [Refactor] Coordinator 优化
+- [x] **T215** 🟢 [Impl] 实现 `coordinator.py` - 错误处理与可用性
+- [x] **T216** 🔵 [Refactor] Coordinator 优化
   - 性能优化（避免过度轮询）
   - 添加指标收集（last_update_time 等）
 
 ### Cycle 2.3: Switch Entity (1033) (TDD)
 
-- [ ] **T220** 🔴 [Test] 编写 `tests/test_switch.py` - 状态同步
+- [x] **T220** 🔴 [Test] 编写 `tests/test_switch.py` - 状态同步
   - `test_switch_state_on()` - 状态 ON
   - `test_switch_state_off()` - 状态 OFF
   - `test_switch_state_unavailable()` - 不可用状态
-- [ ] **T221** 🟢 [Impl] 创建 `switch.py` - PowerSwitchEntity 骨架
-- [ ] **T222** 🔴 [Test] 编写 `tests/test_switch.py` - 控制操作
+- [x] **T221** 🟢 [Impl] 创建 `switch.py` - PowerSwitchEntity 骨架
+- [x] **T222** 🔴 [Test] 编写 `tests/test_switch.py` - 控制操作
   - `test_switch_turn_on()` - 打开
   - `test_switch_turn_off()` - 关闭
   - `test_switch_turn_on_verify_success()` - 回读成功
   - `test_switch_turn_on_verify_failure()` - 回读失败变不可用
-- [ ] **T223** 🟢 [Impl] 实现 `switch.py` - turn_on/turn_off + 回读
-- [ ] **T224** 🔴 [Test] 编写 `tests/test_switch.py` - 集成测试
+- [x] **T223** 🟢 [Impl] 实现 `switch.py` - turn_on/turn_off + 回读
+- [x] **T224** 🔴 [Test] 编写 `tests/test_switch.py` - 集成测试
   - `test_switch_with_coordinator()` - 与 coordinator 集成
   - `test_switch_update_from_coordinator()` - 从缓存更新
-- [ ] **T225** 🟢 [Impl] 完善 `switch.py` - coordinator 集成
-- [ ] **T226** 🔵 [Refactor] Switch 代码优化
+- [x] **T225** 🟢 [Impl] 完善 `switch.py` - coordinator 集成
+- [x] **T226** 🔵 [Refactor] Switch 代码优化
 
 ### Cycle 2.4: Select/Climate Entity (1041) (TDD)
 
-- [ ] **T230** 🔴 [Test] 编写 `tests/test_select.py` - mode_map 映射
+- [x] **T230** 🔴 [Test] 编写 `tests/test_select.py` - mode_map 映射
   - `test_select_default_mode_map()` - 默认映射
   - `test_select_custom_mode_map()` - 自定义映射
   - `test_select_invalid_mode_rejected()` - 无效模式拒绝
-- [ ] **T231** 🟢 [Impl] 创建 `select.py` - ModeSelectEntity 骨架
-- [ ] **T232** 🔴 [Test] 编写 `tests/test_select.py` - 模式切换
+- [x] **T231** 🟢 [Impl] 创建 `select.py` - ModeSelectEntity 骨架
+- [x] **T232** 🔴 [Test] 编写 `tests/test_select.py` - 模式切换
   - `test_select_option()` - 选择模式
   - `test_select_with_verify()` - 回读验证
   - `test_select_unmapped_value()` - 设备返回未映射值
-- [ ] **T233** 🟢 [Impl] 实现 `select.py` - 模式选择与映射
-- [ ] **T234** 🔵 [Refactor] Select 优化（或切换到 Climate 实体）
+- [x] **T233** 🟢 [Impl] 实现 `select.py` - 模式选择与映射
+- [x] **T234** 🔵 [Refactor] Select 优化（或切换到 Climate 实体）
 
 **Checkpoint M2**: ✅ Hub/Coordinator/Entities 可用，能读写 1033/1041
 

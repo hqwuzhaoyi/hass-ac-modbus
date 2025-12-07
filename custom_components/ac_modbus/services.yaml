@@ -1,0 +1,121 @@
+write_register:
+  name: Write Register
+  description: Write a value to a Modbus register with optional readback verification.
+  fields:
+    register:
+      name: Register
+      description: The register address to write to.
+      required: true
+      example: 1033
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+    value:
+      name: Value
+      description: The value to write to the register.
+      required: true
+      example: 1
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+    unit_id:
+      name: Unit ID
+      description: The Modbus unit/slave ID (optional, uses default if not specified).
+      required: false
+      example: 1
+      selector:
+        number:
+          min: 1
+          max: 247
+          mode: box
+    verify:
+      name: Verify
+      description: Whether to verify the write by reading back the value.
+      required: false
+      default: true
+      selector:
+        boolean:
+    expected:
+      name: Expected Value
+      description: The expected readback value (optional, defaults to written value).
+      required: false
+      example: 1
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+    timeout:
+      name: Timeout
+      description: Operation timeout in seconds (optional).
+      required: false
+      example: 5.0
+      selector:
+        number:
+          min: 0.1
+          max: 30
+          step: 0.1
+          mode: box
+          unit_of_measurement: seconds
+
+scan_range:
+  name: Scan Range
+  description: Scan a range of Modbus registers and emit results as an event.
+  fields:
+    start:
+      name: Start
+      description: The starting register address (inclusive).
+      required: true
+      example: 1000
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+    end:
+      name: End
+      description: The ending register address (inclusive).
+      required: true
+      example: 1050
+      selector:
+        number:
+          min: 0
+          max: 65535
+          mode: box
+    step:
+      name: Step
+      description: The step between register addresses.
+      required: false
+      default: 1
+      example: 1
+      selector:
+        number:
+          min: 1
+          max: 100
+          mode: box
+    unit_id:
+      name: Unit ID
+      description: The Modbus unit/slave ID (optional, uses default if not specified).
+      required: false
+      example: 1
+      selector:
+        number:
+          min: 1
+          max: 247
+          mode: box
+    timeout:
+      name: Timeout
+      description: Timeout per register read in seconds (optional).
+      required: false
+      example: 1.0
+      selector:
+        number:
+          min: 0.1
+          max: 10
+          step: 0.1
+          mode: box
+          unit_of_measurement: seconds

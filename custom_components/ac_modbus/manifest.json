@@ -1,0 +1,11 @@
+{
+  "domain": "ac_modbus",
+  "name": "AC Modbus",
+  "codeowners": ["@wuzhaoyi"],
+  "config_flow": true,
+  "documentation": "https://github.com/wuzhaoyi/hass-ac-modbus",
+  "homeassistant": "2024.12.0",
+  "iot_class": "local_polling",
+  "requirements": ["pymodbus>=3.6.0"],
+  "version": "0.1.0"
+}
