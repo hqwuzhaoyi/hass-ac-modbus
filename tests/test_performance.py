@@ -4,14 +4,12 @@ from __future__ import annotations
 
 import asyncio
 import time
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from custom_components.ac_modbus.const import (
     DEFAULT_POLL_INTERVAL,
-    REGISTER_MODE,
     REGISTER_POWER,
 )
 from custom_components.ac_modbus.coordinator import ACModbusCoordinator

@@ -5,8 +5,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 
 def get_manifest_path() -> Path:
     """Get the path to manifest.json."""

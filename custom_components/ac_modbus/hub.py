@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 from datetime import datetime
 from typing import Any
 
 from .const import (
-    CONF_POLL_INTERVAL,
     CONF_RECONNECT_BACKOFF,
     CONF_TIMEOUT,
     CONF_UNIT_ID,
@@ -148,10 +148,8 @@ class ModbusHub:
             async with self._lock:
                 # Close existing client if any
                 if self._client is not None:
-                    try:
+                    with contextlib.suppress(Exception):
                         self._client.close()
-                    except Exception:
-                        pass
                     self._client = None
 
                 # Create client - use only basic parameters for compatibility
@@ -211,7 +209,7 @@ class ModbusHub:
                 self._backoff_count = 0
                 return True
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             self._connected = False
             self._backoff_count += 1
             self._record_error("Connection timeout")
@@ -228,10 +226,8 @@ class ModbusHub:
         """Disconnect from the Modbus device."""
         async with self._lock:
             if self._client is not None:
-                try:
+                with contextlib.suppress(Exception):
                     self._client.close()
-                except Exception:
-                    pass
                 self._client = None
             self._connected = False
             _LOGGER.debug("Disconnected from Modbus device")
@@ -305,7 +301,7 @@ class ModbusHub:
                 last_error = ex
                 _LOGGER.debug("API format %d failed: %s", i + 1, ex)
                 continue
-            except Exception as ex:
+            except Exception:
                 # Other error, don't try more formats
                 raise
 
@@ -356,7 +352,7 @@ class ModbusHub:
                 _LOGGER.debug("Read register %d = %d", address, result.registers[0])
                 return result.registers[0]
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             self._record_error(f"Read timeout at address {address}")
             self._connected = False
             raise
@@ -364,7 +360,7 @@ class ModbusHub:
             self._connected = False
             self._record_error(f"Connection lost: {ex}")
             raise ModbusReadError(f"Connection lost: {ex}") from ex
-        except ModbusReadError as ex:
+        except ModbusReadError:
             # Error already recorded, just re-raise
             raise
         except Exception as ex:
@@ -419,7 +415,7 @@ class ModbusHub:
                 self._last_success_time = datetime.now()
                 _LOGGER.debug("Wrote register %d = %d", address, value)
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             self._record_error(f"Write timeout at address {address}")
             self._connected = False
             raise
@@ -427,7 +423,7 @@ class ModbusHub:
             self._connected = False
             self._record_error(f"Connection lost: {ex}")
             raise ModbusWriteError(f"Connection lost: {ex}") from ex
-        except ModbusWriteError as ex:
+        except ModbusWriteError:
             # Error already recorded, just re-raise
             raise
         except Exception as ex:

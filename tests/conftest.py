@@ -9,11 +9,9 @@ mock fixtures for Modbus client testing.
 
 from __future__ import annotations
 
-import asyncio
-import sys
 from collections.abc import Generator
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -146,7 +144,7 @@ def mock_modbus_client_timeout() -> Generator[MagicMock, None, None]:
 
     # Mock operations that timeout
     async def mock_timeout(*args, **kwargs):
-        raise asyncio.TimeoutError("Modbus operation timed out")
+        raise TimeoutError("Modbus operation timed out")
 
     mock_client.read_holding_registers = AsyncMock(side_effect=mock_timeout)
     mock_client.write_register = AsyncMock(side_effect=mock_timeout)

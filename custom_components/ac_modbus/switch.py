@@ -80,7 +80,7 @@ class ACModbusPowerSwitch:
             return None
         return value == 1
 
-    async def async_turn_on(self, **kwargs: Any) -> None:
+    async def async_turn_on(self, *_kwargs: Any) -> None:
         """Turn on the switch.
 
         Args:
@@ -95,7 +95,7 @@ class ACModbusPowerSwitch:
         # Update coordinator data
         self._coordinator._data[REGISTER_POWER] = 1
 
-    async def async_turn_off(self, **kwargs: Any) -> None:
+    async def async_turn_off(self, *_kwargs: Any) -> None:
         """Turn off the switch.
 
         Args:
@@ -149,7 +149,7 @@ if HAS_HOMEASSISTANT:
                 return None
             return value == 1
 
-        async def async_turn_on(self, **kwargs: Any) -> None:
+        async def async_turn_on(self, *_kwargs: Any) -> None:
             """Turn on the switch."""
             _LOGGER.debug("Turning on AC power")
             await self._coordinator.hub.write_register(
@@ -160,7 +160,7 @@ if HAS_HOMEASSISTANT:
             # Request coordinator refresh
             await self._coordinator.async_refresh()
 
-        async def async_turn_off(self, **kwargs: Any) -> None:
+        async def async_turn_off(self, *_kwargs: Any) -> None:
             """Turn off the switch."""
             _LOGGER.debug("Turning off AC power")
             await self._coordinator.hub.write_register(

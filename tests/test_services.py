@@ -2,24 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from custom_components.ac_modbus.const import (
-    ATTR_END,
-    ATTR_REGISTER,
-    ATTR_RESULTS,
-    ATTR_START,
-    ATTR_VALUE,
-    ATTR_VERIFIED,
-    DEFAULT_POLL_INTERVAL,
-    DEFAULT_PORT,
-    SERVICE_SCAN_RANGE,
-    SERVICE_WRITE_REGISTER,
-)
-from custom_components.ac_modbus.coordinator import ACModbusCoordinator
 from custom_components.ac_modbus.hub import ModbusHub
 from custom_components.ac_modbus.services import (
     WriteRegisterResult,

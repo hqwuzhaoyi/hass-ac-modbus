@@ -5,8 +5,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 TRANSLATIONS_DIR = (
     Path(__file__).parent.parent / "custom_components" / "ac_modbus" / "translations"
 )
@@ -17,7 +15,7 @@ def load_translation(lang: str) -> dict:
     translation_file = TRANSLATIONS_DIR / f"{lang}.json"
     if not translation_file.exists():
         return {}
-    with open(translation_file, "r", encoding="utf-8") as f:
+    with open(translation_file, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -85,7 +83,7 @@ class TestEnglishTranslation:
     def test_en_translation_valid_json(self) -> None:
         """Test English translation is valid JSON."""
         translation_file = TRANSLATIONS_DIR / "en.json"
-        with open(translation_file, "r", encoding="utf-8") as f:
+        with open(translation_file, encoding="utf-8") as f:
             data = json.load(f)
         assert isinstance(data, dict)
 
@@ -125,7 +123,7 @@ class TestChineseTranslation:
     def test_zh_translation_valid_json(self) -> None:
         """Test Chinese translation is valid JSON."""
         translation_file = TRANSLATIONS_DIR / "zh-Hans.json"
-        with open(translation_file, "r", encoding="utf-8") as f:
+        with open(translation_file, encoding="utf-8") as f:
             data = json.load(f)
         assert isinstance(data, dict)
 

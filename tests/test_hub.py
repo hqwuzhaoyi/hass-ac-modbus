@@ -3,16 +3,12 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from custom_components.ac_modbus.const import (
     DEFAULT_PORT,
-    DEFAULT_RECONNECT_BACKOFF,
-    DEFAULT_TIMEOUT,
-    DEFAULT_UNIT_ID,
     REGISTER_MODE,
     REGISTER_POWER,
 )

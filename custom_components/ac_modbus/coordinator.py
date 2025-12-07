@@ -242,7 +242,9 @@ if HAS_HOMEASSISTANT:
                     value = await self._hub.read_register(register)
                     data[register] = value
                 except Exception as ex:
-                    raise UpdateFailed(f"Failed to read register {register}: {ex}")
+                    raise UpdateFailed(
+                        f"Failed to read register {register}: {ex}"
+                    ) from ex
 
             return data
 

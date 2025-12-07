@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from custom_components.ac_modbus.const import (
     ATTR_END,
     ATTR_ERROR,

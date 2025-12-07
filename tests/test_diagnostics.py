@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from custom_components.ac_modbus.const import (
     DEFAULT_POLL_INTERVAL,
-    DEFAULT_PORT,
     REGISTER_MODE,
     REGISTER_POWER,
 )

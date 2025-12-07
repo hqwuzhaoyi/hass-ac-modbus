@@ -3,24 +3,12 @@
 from __future__ import annotations
 
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from custom_components.ac_modbus.const import (
-    CONF_MODE_MAP,
-    CONF_POLL_INTERVAL,
-    CONF_RECONNECT_BACKOFF,
-    CONF_TIMEOUT,
-    CONF_UNIT_ID,
-    DEFAULT_MODE_MAP,
-    DEFAULT_POLL_INTERVAL,
-    DEFAULT_PORT,
-    DEFAULT_RECONNECT_BACKOFF,
-    DEFAULT_TIMEOUT,
-    DEFAULT_UNIT_ID,
     DOMAIN,
-    PLATFORMS,
 )
 
 # Check if homeassistant is available for full integration tests

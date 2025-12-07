@@ -30,7 +30,6 @@ _LOGGER = logging.getLogger(__name__)
 try:
     from homeassistant import config_entries
     from homeassistant.const import CONF_HOST, CONF_PORT
-    from homeassistant.core import HomeAssistant
     from homeassistant.data_entry_flow import FlowResult
 
     HAS_HOMEASSISTANT = True
@@ -72,18 +71,15 @@ def validate_input(user_input: dict[str, Any]) -> dict[str, str]:
 
     # Validate poll interval (if provided)
     poll_interval = user_input.get(CONF_POLL_INTERVAL)
-    if poll_interval is not None:
-        if (
-            not isinstance(poll_interval, (int, float))
-            or poll_interval < MIN_POLL_INTERVAL
-        ):
-            errors["poll_interval"] = "poll_interval_too_low"
+    if poll_interval is not None and (
+        not isinstance(poll_interval, (int, float)) or poll_interval < MIN_POLL_INTERVAL
+    ):
+        errors["poll_interval"] = "poll_interval_too_low"
 
     # Validate timeout vs poll interval
     timeout = user_input.get(CONF_TIMEOUT)
-    if timeout is not None and poll_interval is not None:
-        if timeout >= poll_interval:
-            errors["timeout"] = "timeout_exceeds_poll"
+    if timeout is not None and poll_interval is not None and timeout >= poll_interval:
+        errors["timeout"] = "timeout_exceeds_poll"
 
     return errors
 
@@ -114,7 +110,7 @@ async def validate_connection(
             client.close()
             return True
         return False
-    except asyncio.TimeoutError:
+    except TimeoutError:
         _LOGGER.error("Connection to %s:%s timed out", host, port)
         return False
     except Exception as ex:

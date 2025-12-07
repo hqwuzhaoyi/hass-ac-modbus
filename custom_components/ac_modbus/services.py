@@ -81,7 +81,7 @@ async def async_handle_write_register(
     unit_id: int | None = None,
     verify: bool = True,
     expected: int | None = None,
-    timeout: float | None = None,
+    _timeout: float | None = None,
 ) -> WriteRegisterResult:
     """Handle write_register service call.
 
@@ -159,7 +159,7 @@ async def async_handle_scan_range(
     end: int,
     step: int = 1,
     unit_id: int | None = None,
-    timeout: float | None = None,
+    _timeout: float | None = None,
 ) -> ScanRangeResult:
     """Handle scan_range service call.
 
@@ -259,7 +259,7 @@ try:
             """Handle write_register service call."""
             # Get the first hub from all entries
             hub = None
-            for entry_id, entry_data in hass.data.get(DOMAIN, {}).items():
+            for _entry_id, entry_data in hass.data.get(DOMAIN, {}).items():
                 hub = entry_data.get("hub")
                 if hub:
                     break
@@ -283,7 +283,7 @@ try:
             """Handle scan_range service call."""
             # Get the first hub from all entries
             hub = None
-            for entry_id, entry_data in hass.data.get(DOMAIN, {}).items():
+            for _entry_id, entry_data in hass.data.get(DOMAIN, {}).items():
                 hub = entry_data.get("hub")
                 if hub:
                     break

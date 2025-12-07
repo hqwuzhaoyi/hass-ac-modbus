@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-import asyncio
-from datetime import timedelta
-from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from custom_components.ac_modbus.const import (
     DEFAULT_POLL_INTERVAL,
-    DEFAULT_PORT,
     REGISTER_MODE,
     REGISTER_POWER,
 )

@@ -2,15 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from custom_components.ac_modbus.const import (
     DEFAULT_POLL_INTERVAL,
-    DEFAULT_PORT,
-    DOMAIN,
     REGISTER_POWER,
 )
 from custom_components.ac_modbus.coordinator import ACModbusCoordinator
