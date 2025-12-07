@@ -24,6 +24,8 @@ except ImportError:
     CONF_HOST = "host"
     CONF_PORT = "port"
 
+import contextlib
+
 from custom_components.ac_modbus.coordinator import ACModbusCoordinator
 from custom_components.ac_modbus.hub import ModbusHub
 
@@ -228,10 +230,8 @@ class TestCoordinatorErrorHandling:
         )
 
         for _ in range(3):
-            try:
+            with contextlib.suppress(Exception):
                 await coordinator.async_refresh()
-            except Exception:
-                pass
 
         assert coordinator.consecutive_errors >= 3
 
@@ -268,10 +268,8 @@ class TestCoordinatorAvailability:
             poll_interval=DEFAULT_POLL_INTERVAL,
         )
 
-        try:
+        with contextlib.suppress(Exception):
             await coordinator.async_refresh()
-        except Exception:
-            pass
 
         assert coordinator.available is False
 

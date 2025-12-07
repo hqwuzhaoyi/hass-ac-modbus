@@ -217,7 +217,7 @@ class TestMemoryUsage:
             poll_interval=DEFAULT_POLL_INTERVAL,
         )
 
-        initial_size = len(coordinator._data)
+        len(coordinator._data)
 
         # Many refreshes
         for _ in range(100):

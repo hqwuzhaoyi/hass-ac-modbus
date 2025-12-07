@@ -32,6 +32,8 @@ fail_under = 85
 [tool.ruff]
 target-version = "py312"
 line-length = 88
+
+[tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
@@ -47,7 +49,10 @@ ignore = [
     "E501",  # line too long (handled by black)
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ARG001", "ARG002", "F401", "B017"]  # Allow unused arguments and imports in tests
+
+[tool.ruff.lint.isort]
 known-first-party = ["custom_components.ac_modbus"]
 
 [tool.black]

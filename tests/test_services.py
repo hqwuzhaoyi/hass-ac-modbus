@@ -85,7 +85,7 @@ class TestWriteRegisterService:
         self, mock_hub: MagicMock, mock_modbus_responses: dict[int, int]
     ) -> None:
         """Test register write with custom unit_id."""
-        result = await async_handle_write_register(
+        await async_handle_write_register(
             hub=mock_hub,
             register=1033,
             value=1,
@@ -101,7 +101,7 @@ class TestWriteRegisterService:
         self, mock_hub: MagicMock, mock_modbus_responses: dict[int, int]
     ) -> None:
         """Test register write with custom expected value."""
-        result = await async_handle_write_register(
+        await async_handle_write_register(
             hub=mock_hub,
             register=1033,
             value=1,
@@ -212,7 +212,6 @@ class TestScanRangeService:
 
         # Make some reads fail
         call_count = 0
-        original_read = mock_hub.read_register
 
         async def mock_read_with_failure(
             address: int, count: int = 1, unit_id: int | None = None

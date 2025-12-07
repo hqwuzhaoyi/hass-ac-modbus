@@ -23,6 +23,8 @@ except ImportError:
     CONF_HOST = "host"
     CONF_PORT = "port"
 
+import contextlib
+
 from custom_components.ac_modbus.hub import ModbusHub
 
 
@@ -260,7 +262,6 @@ class TestHubWriteOperations:
             await hub.connect()
 
             # Patch readback to return different value
-            original_read = mock_modbus_client.read_holding_registers
 
             async def mock_read_mismatch(address: int, count: int = 1, slave: int = 1):
                 result = MagicMock()
@@ -384,10 +385,8 @@ class TestHubErrorHandling:
             hub = ModbusHub(config)
             await hub.connect()
 
-            try:
+            with contextlib.suppress(Exception):
                 await hub.read_register(REGISTER_POWER)
-            except Exception:
-                pass
 
             assert hub.last_error is not None
 
@@ -405,9 +404,7 @@ class TestHubErrorHandling:
             hub = ModbusHub(config)
             await hub.connect()
 
-            try:
+            with contextlib.suppress(Exception):
                 await hub.read_register(REGISTER_POWER)
-            except Exception:
-                pass
 
             assert hub.last_error_time is not None
