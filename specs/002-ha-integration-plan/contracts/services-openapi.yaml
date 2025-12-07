@@ -1,0 +1,109 @@
+openapi: 3.0.3
+info:
+  title: ac_modbus Service Contracts
+  version: "0.1.0"
+  description: >
+    Logical API contracts for Home Assistant services exposed by the `ac_modbus` custom
+    integration. These mirror HA service payloads for testing and documentation.
+paths:
+  /services/ac_modbus/write_register:
+    post:
+      summary: Write a single Modbus register with optional readback verification.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WriteRegisterRequest"
+      responses:
+        "200":
+          description: Write performed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WriteRegisterResponse"
+  /services/ac_modbus/scan_range:
+    post:
+      summary: Scan a contiguous register range and emit an event with results.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScanRangeRequest"
+      responses:
+        "202":
+          description: Scan accepted and results will be emitted as event `ac_modbus_scan_result`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    type: string
+                    enum: [ac_modbus_scan_result]
+                  note:
+                    type: string
+components:
+  schemas:
+    WriteRegisterRequest:
+      type: object
+      required: [register, value]
+      properties:
+        register:
+          type: integer
+          minimum: 0
+        value:
+          type: integer
+        unit_id:
+          type: integer
+          description: Overrides default config entry unit_id when present.
+        verify:
+          type: boolean
+          default: true
+          description: When true, perform readback validation after write.
+        expected:
+          type: integer
+          description: Optional expected readback value; defaults to `value`.
+        timeout:
+          type: number
+          format: float
+          description: Per-call timeout in seconds; must be less than poll interval.
+    WriteRegisterResponse:
+      type: object
+      required: [register, value, verified]
+      properties:
+        register:
+          type: integer
+        value:
+          type: integer
+        verified:
+          type: boolean
+        readback:
+          type: integer
+          nullable: true
+        error:
+          type: string
+          nullable: true
+          description: Populated when verification fails or the write errors.
+        unit_id:
+          type: integer
+    ScanRangeRequest:
+      type: object
+      required: [start, end]
+      properties:
+        start:
+          type: integer
+          description: Inclusive start register.
+        end:
+          type: integer
+          description: Inclusive end register; (end - start) must be ≤ 100.
+        step:
+          type: integer
+          default: 1
+        unit_id:
+          type: integer
+        timeout:
+          type: number
+          format: float
+          description: Per-request timeout.
