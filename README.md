@@ -19,10 +19,12 @@ Home Assistant custom integration for controlling air conditioners via Modbus TC
 
 ## Supported Registers
 
-| Register | Function | Values |
-|----------|----------|--------|
-| 1033 | Power | 0=Off, 1=On |
-| 1041 | Mode | 1=Cool, 2=Heat, 3=Fan Only, 4=Dry |
+| Register | Function | Values | Constraint |
+|----------|----------|--------|------------|
+| 1033 | Power | 0=Off, 1=On | - |
+| 1034 | Home/Away | 0=Away, 1=Home | Power must be ON |
+| 1041 | Mode | 1=Cool, 2=Heat, 3=Fan Only, 4=Dry | Power must be OFF |
+| 1168 | Humidify | 0=Off, 1=On | Power must be ON |
 
 ## Installation
 
@@ -74,10 +76,12 @@ Home Assistant custom integration for controlling air conditioners via Modbus TC
 
 After successful configuration, the following entities will be created:
 
-| Entity | Type | Description |
-|--------|------|-------------|
-| `switch.ac_modbus_power` | Switch | Control AC power on/off |
-| `select.ac_modbus_mode` | Select | Select AC operating mode |
+| Entity | Type | Description | Constraint |
+|--------|------|-------------|------------|
+| `switch.ac_modbus_power` | Switch | Control AC power on/off | - |
+| `switch.ac_modbus_home_mode` | Switch | Control Home/Away mode | Power must be ON |
+| `switch.ac_modbus_humidify` | Switch | Control humidifier | Power must be ON |
+| `select.ac_modbus_mode` | Select | Select AC operating mode | Power must be OFF |
 
 ## Services
 
@@ -209,7 +213,12 @@ This repository also includes a Next.js web application for direct Modbus contro
 
 - Real-time WebSocket connection for monitoring
 - Manual register read/write interface
-- Register scanning tools
+- Control panels for:
+  - Power on/off (1033)
+  - Mode selection (1041) - requires power OFF
+  - Home/Away mode (1034) - requires power ON
+  - Humidify switch (1168) - requires power ON
+- Smart constraint validation (disables controls based on power state)
 
 ## Quick Start (Web Panel)
 

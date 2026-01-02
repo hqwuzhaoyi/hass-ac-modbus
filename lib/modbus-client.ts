@@ -82,10 +82,12 @@ export class ModbusClientManager {
   ]);
   private mqttBridge: MqttBridge | null = null;
 
-  // 已知寄存器配置（精简为核心控制：总开关、主机模式）
+  // 已知寄存器配置（核心控制寄存器）
   private knownRegisters = new Map<number, KnownRegisterConfig>([
     [1033, { name: '总开关', type: 'switch', writable: true }],
+    [1034, { name: '居家/离家', type: 'switch', writable: true }],
     [1041, { name: '主机模式', type: 'value', writable: true }],
+    [1168, { name: '加湿', type: 'switch', writable: true }],
   ]);
 
   // 动态发现的寄存器（当前已停用）

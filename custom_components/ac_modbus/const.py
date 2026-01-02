@@ -25,7 +25,9 @@ DEFAULT_SCAN_STEP: Final = 1
 
 # Register addresses
 REGISTER_POWER: Final = 1033  # Power on/off (0=off, 1=on)
-REGISTER_MODE: Final = 1041  # Operating mode
+REGISTER_HOME_AWAY: Final = 1034  # Home/Away (0=away, 1=home) - requires power ON
+REGISTER_MODE: Final = 1041  # Operating mode - requires power OFF
+REGISTER_HUMIDIFY: Final = 1168  # Humidify on/off (0=off, 1=on) - requires power ON
 
 # Mode map: register value -> mode name
 DEFAULT_MODE_MAP: Final = {
@@ -40,7 +42,7 @@ MIN_POLL_INTERVAL: Final = 5  # seconds
 MAX_SCAN_RANGE: Final = 100  # registers
 
 # Platforms
-PLATFORMS: Final = ["switch", "select"]
+PLATFORMS: Final = ["switch", "select", "sensor"]
 
 # Services
 SERVICE_WRITE_REGISTER: Final = "write_register"

@@ -7,7 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Power, Settings, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { Power, Settings, Wifi, WifiOff, RefreshCw, Home, Droplets } from 'lucide-react';
 import { RegisterData, WebSocketMessage } from '@/types/modbus';
 
 type RegisterState = {
@@ -18,13 +18,17 @@ type RegisterState = {
 
 const CONTROL_REGISTERS: Array<{ address: number; name: string; type: 'switch' | 'mode' }> = [
   { address: 1033, name: '总开关', type: 'switch' },
+  { address: 1034, name: '居家/离家', type: 'switch' },
   { address: 1041, name: '主机模式', type: 'mode' },
+  { address: 1168, name: '加湿', type: 'switch' },
 ];
 
 const RegisterMonitor = () => {
   const [connected, setConnected] = useState(false);
   const [powerState, setPowerState] = useState<RegisterState>({ value: null, rawValue: null });
+  const [homeAwayState, setHomeAwayState] = useState<RegisterState>({ value: null, rawValue: null });
   const [modeState, setModeState] = useState<RegisterState>({ value: null, rawValue: null });
+  const [humidifyState, setHumidifyState] = useState<RegisterState>({ value: null, rawValue: null });
   const [modeInput, setModeInput] = useState('1');
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -37,11 +41,15 @@ const RegisterMonitor = () => {
 
     if (reg.address === 1033) {
       setPowerState(state);
+    } else if (reg.address === 1034) {
+      setHomeAwayState(state);
     } else if (reg.address === 1041) {
       setModeState(state);
       if (reg.rawValue !== undefined) {
         setModeInput(String(reg.rawValue));
       }
+    } else if (reg.address === 1168) {
+      setHumidifyState(state);
     }
   };
 
@@ -186,7 +194,7 @@ const RegisterMonitor = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -225,13 +233,15 @@ const RegisterMonitor = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className={powerState.rawValue === 1 ? 'opacity-50' : ''}>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Settings className="h-5 w-5" />
               <span>主机模式 (1041)</span>
             </CardTitle>
-            <CardDescription>写入模式值（例如 1 制冷 / 2 制热 / 3 通风 / 4 除湿）</CardDescription>
+            <CardDescription>
+              {powerState.rawValue === 1 ? '⚠️ 需要先关闭总开关' : '1 制冷 / 2 制热 / 3 通风 / 4 除湿'}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
@@ -259,14 +269,117 @@ const RegisterMonitor = () => {
                   type="number"
                   inputMode="numeric"
                   className="w-24"
+                  disabled={!connected || powerState.rawValue === 1}
                 />
                 <Button
                   onClick={() => writeRegister(1041, parseInt(modeInput, 10))}
-                  disabled={!connected || Number.isNaN(parseInt(modeInput, 10))}
+                  disabled={!connected || powerState.rawValue === 1 || Number.isNaN(parseInt(modeInput, 10))}
                 >
                   写入
                 </Button>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={powerState.rawValue !== 1 ? 'opacity-50' : ''}>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Home className="h-5 w-5" />
+              <span>居家/离家 (1034)</span>
+            </CardTitle>
+            <CardDescription>
+              {powerState.rawValue !== 1 ? '⚠️ 需要先打开总开关' : '1=居家，0=离家'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm text-muted-foreground">当前状态</div>
+                <div className="text-2xl font-mono">
+                  {homeAwayState.rawValue === null
+                    ? '--'
+                    : homeAwayState.rawValue === 1
+                      ? '居家'
+                      : '离家'}
+                </div>
+                {homeAwayState.lastUpdated && (
+                  <div className="text-xs text-muted-foreground">
+                    更新时间 {formatTime(homeAwayState.lastUpdated)}
+                  </div>
+                )}
+              </div>
+              <Switch
+                checked={homeAwayState.rawValue === 1}
+                onCheckedChange={(checked) => writeRegister(1034, checked ? 1 : 0)}
+                disabled={!connected || powerState.rawValue !== 1}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" onClick={() => readRegister(1034)} disabled={!connected}>
+                读取
+              </Button>
+              <Button
+                variant={homeAwayState.rawValue === 1 ? 'outline' : 'default'}
+                onClick={() => writeRegister(1034, 1)}
+                disabled={!connected || powerState.rawValue !== 1}
+              >
+                居家
+              </Button>
+              <Button
+                variant={homeAwayState.rawValue === 0 ? 'outline' : 'default'}
+                onClick={() => writeRegister(1034, 0)}
+                disabled={!connected || powerState.rawValue !== 1}
+              >
+                离家
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={powerState.rawValue !== 1 ? 'opacity-50' : ''}>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Droplets className="h-5 w-5" />
+              <span>加湿 (1168)</span>
+            </CardTitle>
+            <CardDescription>
+              {powerState.rawValue !== 1 ? '⚠️ 需要先打开总开关' : '1=开启，0=关闭'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm text-muted-foreground">当前状态</div>
+                <div className="text-2xl font-mono">
+                  {humidifyState.rawValue === null
+                    ? '--'
+                    : humidifyState.rawValue === 1
+                      ? '开启'
+                      : '关闭'}
+                </div>
+                {humidifyState.lastUpdated && (
+                  <div className="text-xs text-muted-foreground">
+                    更新时间 {formatTime(humidifyState.lastUpdated)}
+                  </div>
+                )}
+              </div>
+              <Switch
+                checked={humidifyState.rawValue === 1}
+                onCheckedChange={(checked) => writeRegister(1168, checked ? 1 : 0)}
+                disabled={!connected || powerState.rawValue !== 1}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" onClick={() => readRegister(1168)} disabled={!connected}>
+                读取
+              </Button>
+              <Button
+                onClick={() => writeRegister(1168, humidifyState.rawValue === 1 ? 0 : 1)}
+                disabled={!connected || powerState.rawValue !== 1}
+              >
+                {humidifyState.rawValue === 1 ? '关闭' : '开启'}
+              </Button>
             </div>
           </CardContent>
         </Card>
