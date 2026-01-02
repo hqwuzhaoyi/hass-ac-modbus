@@ -39,18 +39,16 @@ if HAS_HOMEASSISTANT:
             self,
             coordinator: ACModbusCoordinator,
             entry_id: str,
-            mode_map: dict[int, str] | None = None,
         ) -> None:
             """Initialize the sensor entity.
 
             Args:
                 coordinator: The data coordinator.
                 entry_id: Config entry ID for unique identification.
-                mode_map: Optional custom mode mapping (register value -> mode name).
             """
             self._coordinator = coordinator
             self._entry_id = entry_id
-            self._mode_map = mode_map if mode_map is not None else DEFAULT_MODE_MAP
+            self._mode_map = DEFAULT_MODE_MAP
 
             self._attr_name = "AC Mode"
             self._attr_unique_id = f"{entry_id}_mode_sensor"
@@ -107,14 +105,9 @@ if HAS_HOMEASSISTANT:
             entry: Config entry.
             async_add_entities: Callback to add entities.
         """
-        from .const import CONF_MODE_MAP
-
         coordinator = hass.data[DOMAIN][entry.entry_id].get("coordinator")
         if coordinator is None:
             _LOGGER.error("Coordinator not found for entry %s", entry.entry_id)
             return
 
-        # Get custom mode map from config if present
-        mode_map = entry.data.get(CONF_MODE_MAP)
-
-        async_add_entities([HAModeSensorEntity(coordinator, entry.entry_id, mode_map)])
+        async_add_entities([HAModeSensorEntity(coordinator, entry.entry_id)])
