@@ -47,6 +47,12 @@
     "switch": {
       "power": {
         "name": "Power"
+      },
+      "home_mode": {
+        "name": "Home Mode"
+      },
+      "humidify": {
+        "name": "Humidify"
       }
     },
     "select": {

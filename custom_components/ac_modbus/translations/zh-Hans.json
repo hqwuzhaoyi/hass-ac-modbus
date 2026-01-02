@@ -47,6 +47,12 @@
     "switch": {
       "power": {
         "name": "电源"
+      },
+      "home_mode": {
+        "name": "居家模式"
+      },
+      "humidify": {
+        "name": "加湿"
       }
     },
     "select": {

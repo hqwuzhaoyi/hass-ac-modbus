@@ -5,7 +5,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from .const import DOMAIN, REGISTER_POWER
+from .const import (
+    DOMAIN,
+    REGISTER_HOME_AWAY,
+    REGISTER_HUMIDIFY,
+    REGISTER_POWER,
+)
 
 if TYPE_CHECKING:
     from .coordinator import ACModbusCoordinator
@@ -181,6 +186,172 @@ if HAS_HOMEASSISTANT:
                 "model": "Modbus AC",
             }
 
+    class HAHomeAwaySwitchEntity(SwitchEntity):
+        """Home Assistant Switch entity for Home/Away mode control.
+
+        This switch controls register 1034 and requires power to be ON.
+        """
+
+        def __init__(
+            self,
+            coordinator: ACModbusCoordinator,
+            entry_id: str,
+        ) -> None:
+            """Initialize the switch entity.
+
+            Args:
+                coordinator: The data coordinator.
+                entry_id: Config entry ID for unique identification.
+            """
+            self._coordinator = coordinator
+            self._entry_id = entry_id
+            self._attr_name = "Home Mode"
+            self._attr_unique_id = f"{entry_id}_home_away_switch"
+            self._attr_has_entity_name = True
+            self._attr_icon = "mdi:home-account"
+
+        @property
+        def available(self) -> bool:
+            """Return True if entity is available.
+
+            This switch is only available when power is ON.
+            """
+            if not self._coordinator.available:
+                return False
+            power_value = self._coordinator.get_register(REGISTER_POWER)
+            return power_value == 1
+
+        @property
+        def is_on(self) -> bool | None:
+            """Return True if the switch is on (Home mode)."""
+            if not self._coordinator.available:
+                return None
+            value = self._coordinator.get_register(REGISTER_HOME_AWAY)
+            if value is None:
+                return None
+            return value == 1
+
+        async def async_turn_on(self, *_kwargs: Any) -> None:
+            """Turn on the switch (set to Home mode)."""
+            power_value = self._coordinator.get_register(REGISTER_POWER)
+            if power_value != 1:
+                _LOGGER.warning("Cannot set Home mode: power is OFF")
+                return
+            _LOGGER.debug("Setting Home mode")
+            await self._coordinator.hub.write_register(
+                address=REGISTER_HOME_AWAY,
+                value=1,
+                verify=True,
+            )
+            await self._coordinator.async_refresh()
+
+        async def async_turn_off(self, *_kwargs: Any) -> None:
+            """Turn off the switch (set to Away mode)."""
+            power_value = self._coordinator.get_register(REGISTER_POWER)
+            if power_value != 1:
+                _LOGGER.warning("Cannot set Away mode: power is OFF")
+                return
+            _LOGGER.debug("Setting Away mode")
+            await self._coordinator.hub.write_register(
+                address=REGISTER_HOME_AWAY,
+                value=0,
+                verify=True,
+            )
+            await self._coordinator.async_refresh()
+
+        @property
+        def device_info(self) -> dict[str, Any]:
+            """Return device info."""
+            return {
+                "identifiers": {(DOMAIN, self._entry_id)},
+                "name": "AC Modbus Device",
+                "manufacturer": "Unknown",
+                "model": "Modbus AC",
+            }
+
+    class HAHumidifySwitchEntity(SwitchEntity):
+        """Home Assistant Switch entity for Humidify control.
+
+        This switch controls register 1168 and requires power to be ON.
+        """
+
+        def __init__(
+            self,
+            coordinator: ACModbusCoordinator,
+            entry_id: str,
+        ) -> None:
+            """Initialize the switch entity.
+
+            Args:
+                coordinator: The data coordinator.
+                entry_id: Config entry ID for unique identification.
+            """
+            self._coordinator = coordinator
+            self._entry_id = entry_id
+            self._attr_name = "Humidify"
+            self._attr_unique_id = f"{entry_id}_humidify_switch"
+            self._attr_has_entity_name = True
+            self._attr_icon = "mdi:water"
+
+        @property
+        def available(self) -> bool:
+            """Return True if entity is available.
+
+            This switch is only available when power is ON.
+            """
+            if not self._coordinator.available:
+                return False
+            power_value = self._coordinator.get_register(REGISTER_POWER)
+            return power_value == 1
+
+        @property
+        def is_on(self) -> bool | None:
+            """Return True if the switch is on (Humidify enabled)."""
+            if not self._coordinator.available:
+                return None
+            value = self._coordinator.get_register(REGISTER_HUMIDIFY)
+            if value is None:
+                return None
+            return value == 1
+
+        async def async_turn_on(self, *_kwargs: Any) -> None:
+            """Turn on the humidifier."""
+            power_value = self._coordinator.get_register(REGISTER_POWER)
+            if power_value != 1:
+                _LOGGER.warning("Cannot turn on humidifier: power is OFF")
+                return
+            _LOGGER.debug("Turning on humidifier")
+            await self._coordinator.hub.write_register(
+                address=REGISTER_HUMIDIFY,
+                value=1,
+                verify=True,
+            )
+            await self._coordinator.async_refresh()
+
+        async def async_turn_off(self, *_kwargs: Any) -> None:
+            """Turn off the humidifier."""
+            power_value = self._coordinator.get_register(REGISTER_POWER)
+            if power_value != 1:
+                _LOGGER.warning("Cannot turn off humidifier: power is OFF")
+                return
+            _LOGGER.debug("Turning off humidifier")
+            await self._coordinator.hub.write_register(
+                address=REGISTER_HUMIDIFY,
+                value=0,
+                verify=True,
+            )
+            await self._coordinator.async_refresh()
+
+        @property
+        def device_info(self) -> dict[str, Any]:
+            """Return device info."""
+            return {
+                "identifiers": {(DOMAIN, self._entry_id)},
+                "name": "AC Modbus Device",
+                "manufacturer": "Unknown",
+                "model": "Modbus AC",
+            }
+
     async def async_setup_entry(
         hass: HomeAssistant,
         entry: ConfigEntry,
@@ -198,4 +369,8 @@ if HAS_HOMEASSISTANT:
             _LOGGER.error("Coordinator not found for entry %s", entry.entry_id)
             return
 
-        async_add_entities([HAPowerSwitchEntity(coordinator, entry.entry_id)])
+        async_add_entities([
+            HAPowerSwitchEntity(coordinator, entry.entry_id),
+            HAHomeAwaySwitchEntity(coordinator, entry.entry_id),
+            HAHumidifySwitchEntity(coordinator, entry.entry_id),
+        ])

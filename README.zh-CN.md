@@ -76,10 +76,12 @@
 
 配置成功后，将创建以下实体：
 
-| 实体 | 类型 | 描述 |
-|------|------|------|
-| `switch.ac_modbus_power` | 开关 | 控制空调电源开关 |
-| `select.ac_modbus_mode` | 选择器 | 选择空调运行模式 |
+| 实体 | 类型 | 描述 | 操作限制 |
+|------|------|------|----------|
+| `switch.ac_modbus_power` | 开关 | 控制空调电源开关 | - |
+| `switch.ac_modbus_home_mode` | 开关 | 控制居家/离家模式 | 需要电源开启 |
+| `switch.ac_modbus_humidify` | 开关 | 控制加湿功能 | 需要电源开启 |
+| `select.ac_modbus_mode` | 选择器 | 选择空调运行模式 | 需要电源关闭 |
 
 ## 服务
 

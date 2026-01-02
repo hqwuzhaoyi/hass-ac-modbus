@@ -76,10 +76,12 @@ Home Assistant custom integration for controlling air conditioners via Modbus TC
 
 After successful configuration, the following entities will be created:
 
-| Entity | Type | Description |
-|--------|------|-------------|
-| `switch.ac_modbus_power` | Switch | Control AC power on/off |
-| `select.ac_modbus_mode` | Select | Select AC operating mode |
+| Entity | Type | Description | Constraint |
+|--------|------|-------------|------------|
+| `switch.ac_modbus_power` | Switch | Control AC power on/off | - |
+| `switch.ac_modbus_home_mode` | Switch | Control Home/Away mode | Power must be ON |
+| `switch.ac_modbus_humidify` | Switch | Control humidifier | Power must be ON |
+| `select.ac_modbus_mode` | Select | Select AC operating mode | Power must be OFF |
 
 ## Services
 

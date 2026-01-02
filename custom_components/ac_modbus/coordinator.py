@@ -8,6 +8,8 @@ from typing import TYPE_CHECKING, Any
 
 from .const import (
     DEFAULT_POLL_INTERVAL,
+    REGISTER_HOME_AWAY,
+    REGISTER_HUMIDIFY,
     REGISTER_MODE,
     REGISTER_POWER,
 )
@@ -65,7 +67,12 @@ class ACModbusCoordinator:
         self._consecutive_errors = 0
 
         # Registers to poll
-        self._registers = [REGISTER_POWER, REGISTER_MODE]
+        self._registers = [
+            REGISTER_POWER,
+            REGISTER_HOME_AWAY,
+            REGISTER_MODE,
+            REGISTER_HUMIDIFY,
+        ]
 
     @property
     def hub(self) -> ModbusHub:
@@ -211,7 +218,12 @@ if HAS_HOMEASSISTANT:
                 update_interval=timedelta(seconds=poll_interval),
             )
             self._hub = hub
-            self._registers = [REGISTER_POWER, REGISTER_MODE]
+            self._registers = [
+                REGISTER_POWER,
+                REGISTER_HOME_AWAY,
+                REGISTER_MODE,
+                REGISTER_HUMIDIFY,
+            ]
 
         @property
         def hub(self) -> ModbusHub:
