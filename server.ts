@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 import { getModbusManager } from './lib/modbus-client';
 
-const ALLOWED_REGISTERS = [1033, 1041];
+const ALLOWED_REGISTERS = [1033, 1034, 1041, 1168];
 
 const SESSION_CONFIG = {
   pollingInterval: 0,
@@ -141,7 +141,7 @@ wss.on('connection', (ws) => {
               ws.send(
                 JSON.stringify({
                   type: 'error',
-                  data: { message: '仅支持寄存器 1033 与 1041 的读取' },
+                  data: { message: '仅支持寄存器 1033, 1034, 1041, 1168 的读取' },
                   timestamp: new Date().toISOString(),
                 }),
               );
@@ -178,7 +178,7 @@ wss.on('connection', (ws) => {
               ws.send(
                 JSON.stringify({
                   type: 'error',
-                  data: { message: '仅支持寄存器 1033 与 1041 的写入' },
+                  data: { message: '仅支持寄存器 1033, 1034, 1041, 1168 的写入' },
                   timestamp: new Date().toISOString(),
                 }),
               );
@@ -201,7 +201,7 @@ wss.on('connection', (ws) => {
           ws.send(
             JSON.stringify({
               type: 'response',
-              data: { message: '扫描/动态发现/阈值配置已停用，当前仅手动操作 1033/1041' },
+              data: { message: '扫描/动态发现/阈值配置已停用，当前仅手动操作 1033/1034/1041/1168' },
               timestamp: new Date().toISOString(),
             }),
           );
