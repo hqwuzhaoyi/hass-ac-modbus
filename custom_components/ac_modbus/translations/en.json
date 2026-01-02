@@ -55,9 +55,14 @@
         "name": "Humidify"
       }
     },
+    "sensor": {
+      "mode": {
+        "name": "AC Mode"
+      }
+    },
     "select": {
       "mode": {
-        "name": "Mode",
+        "name": "Mode Setting",
         "state": {
           "auto": "Auto",
           "cool": "Cool",

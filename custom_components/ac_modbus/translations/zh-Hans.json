@@ -55,9 +55,14 @@
         "name": "加湿"
       }
     },
+    "sensor": {
+      "mode": {
+        "name": "当前模式"
+      }
+    },
     "select": {
       "mode": {
-        "name": "模式",
+        "name": "模式设置",
         "state": {
           "auto": "自动",
           "cool": "制冷",

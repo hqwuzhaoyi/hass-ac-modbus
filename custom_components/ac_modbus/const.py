@@ -42,7 +42,7 @@ MIN_POLL_INTERVAL: Final = 5  # seconds
 MAX_SCAN_RANGE: Final = 100  # registers
 
 # Platforms
-PLATFORMS: Final = ["switch", "select"]
+PLATFORMS: Final = ["switch", "select", "sensor"]
 
 # Services
 SERVICE_WRITE_REGISTER: Final = "write_register"
