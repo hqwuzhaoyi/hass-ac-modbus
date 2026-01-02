@@ -18,17 +18,19 @@ try:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
+    from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
     HAS_HOMEASSISTANT = True
 except ImportError:
     HAS_HOMEASSISTANT = False
     SensorEntity = object  # type: ignore[misc, assignment]
+    CoordinatorEntity = object  # type: ignore[misc, assignment]
 
 
 # HA-specific entity (only available when homeassistant is installed)
 if HAS_HOMEASSISTANT:
 
-    class HAModeSensorEntity(SensorEntity):
+    class HAModeSensorEntity(CoordinatorEntity, SensorEntity):
         """Home Assistant Sensor entity for AC mode display.
 
         This sensor always shows the current mode value, regardless of power state.
@@ -46,7 +48,7 @@ if HAS_HOMEASSISTANT:
                 coordinator: The data coordinator.
                 entry_id: Config entry ID for unique identification.
             """
-            self._coordinator = coordinator
+            super().__init__(coordinator)
             self._entry_id = entry_id
             self._mode_map = DEFAULT_MODE_MAP
 
@@ -58,7 +60,7 @@ if HAS_HOMEASSISTANT:
         @property
         def available(self) -> bool:
             """Return True if entity is available."""
-            return self._coordinator.available
+            return self.coordinator.available
 
         @property
         def native_value(self) -> str | None:
@@ -66,7 +68,7 @@ if HAS_HOMEASSISTANT:
             if not self.available:
                 return None
 
-            value = self._coordinator.get_register(REGISTER_MODE)
+            value = self.coordinator.get_register(REGISTER_MODE)
             if value is None:
                 return None
 
@@ -75,10 +77,10 @@ if HAS_HOMEASSISTANT:
         @property
         def extra_state_attributes(self) -> dict[str, Any]:
             """Return extra state attributes."""
-            power_value = self._coordinator.get_register(REGISTER_POWER)
+            power_value = self.coordinator.get_register(REGISTER_POWER)
             power_on = power_value == 1
             return {
-                "register_value": self._coordinator.get_register(REGISTER_MODE),
+                "register_value": self.coordinator.get_register(REGISTER_MODE),
                 "editable": not power_on,
                 "constraint": "Turn off power to change mode" if power_on else None,
             }

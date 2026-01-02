@@ -18,11 +18,13 @@ try:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
+    from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
     HAS_HOMEASSISTANT = True
 except ImportError:
     HAS_HOMEASSISTANT = False
     SelectEntity = object  # type: ignore[misc, assignment]
+    CoordinatorEntity = object  # type: ignore[misc, assignment]
 
 
 class ACModbusModeSelect:
@@ -123,7 +125,7 @@ class ACModbusModeSelect:
 # HA-specific entity (only available when homeassistant is installed)
 if HAS_HOMEASSISTANT:
 
-    class HAModeSelectEntity(SelectEntity):
+    class HAModeSelectEntity(CoordinatorEntity, SelectEntity):
         """Home Assistant Select entity for AC mode control."""
 
         def __init__(
@@ -139,7 +141,7 @@ if HAS_HOMEASSISTANT:
                 entry_id: Config entry ID for unique identification.
                 mode_map: Optional custom mode mapping.
             """
-            self._coordinator = coordinator
+            super().__init__(coordinator)
             self._entry_id = entry_id
             self._mode_map = mode_map if mode_map is not None else DEFAULT_MODE_MAP
             self._reverse_map = {v: k for k, v in self._mode_map.items()}
@@ -155,18 +157,18 @@ if HAS_HOMEASSISTANT:
 
             Mode selection is only available when power is OFF.
             """
-            if not self._coordinator.available:
+            if not self.coordinator.available:
                 return False
-            power_value = self._coordinator.get_register(REGISTER_POWER)
+            power_value = self.coordinator.get_register(REGISTER_POWER)
             return power_value == 0
 
         @property
         def current_option(self) -> str | None:
             """Return the current selected option."""
-            if not self._coordinator.available:
+            if not self.coordinator.available:
                 return None
 
-            value = self._coordinator.get_register(REGISTER_MODE)
+            value = self.coordinator.get_register(REGISTER_MODE)
             if value is None:
                 return None
 
@@ -175,7 +177,7 @@ if HAS_HOMEASSISTANT:
         async def async_select_option(self, option: str) -> None:
             """Change the selected option."""
             # Check power state - mode can only be changed when power is OFF
-            power_value = self._coordinator.get_register(REGISTER_POWER)
+            power_value = self.coordinator.get_register(REGISTER_POWER)
             if power_value != 0:
                 _LOGGER.warning("Cannot change mode: power is ON")
                 return
@@ -188,14 +190,14 @@ if HAS_HOMEASSISTANT:
                 "Setting AC mode to '%s' (register value: %d)", option, register_value
             )
 
-            await self._coordinator.hub.write_register(
+            await self.coordinator.hub.write_register(
                 address=REGISTER_MODE,
                 value=register_value,
                 verify=True,
             )
 
             # Request coordinator refresh
-            await self._coordinator.async_refresh()
+            await self.coordinator.async_refresh()
 
         @property
         def device_info(self) -> dict[str, Any]:
