@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from .const import DEFAULT_MODE_MAP, DOMAIN, REGISTER_MODE
+from .const import DEFAULT_MODE_MAP, DOMAIN, REGISTER_MODE, REGISTER_POWER
 
 if TYPE_CHECKING:
     from .coordinator import ACModbusCoordinator
@@ -151,13 +151,19 @@ if HAS_HOMEASSISTANT:
 
         @property
         def available(self) -> bool:
-            """Return True if entity is available."""
-            return self._coordinator.available
+            """Return True if entity is available.
+
+            Mode selection is only available when power is OFF.
+            """
+            if not self._coordinator.available:
+                return False
+            power_value = self._coordinator.get_register(REGISTER_POWER)
+            return power_value == 0
 
         @property
         def current_option(self) -> str | None:
             """Return the current selected option."""
-            if not self.available:
+            if not self._coordinator.available:
                 return None
 
             value = self._coordinator.get_register(REGISTER_MODE)
@@ -168,6 +174,12 @@ if HAS_HOMEASSISTANT:
 
         async def async_select_option(self, option: str) -> None:
             """Change the selected option."""
+            # Check power state - mode can only be changed when power is OFF
+            power_value = self._coordinator.get_register(REGISTER_POWER)
+            if power_value != 0:
+                _LOGGER.warning("Cannot change mode: power is ON")
+                return
+
             if option not in self._reverse_map:
                 raise ValueError(f"Option '{option}' is not valid")
 
