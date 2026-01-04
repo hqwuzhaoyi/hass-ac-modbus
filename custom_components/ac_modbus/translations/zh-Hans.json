@@ -58,6 +58,14 @@
     "sensor": {
       "mode": {
         "name": "当前模式"
+      },
+      "filter_days_remaining": {
+        "name": "滤芯剩余天数"
+      }
+    },
+    "button": {
+      "filter_reset": {
+        "name": "滤芯已更换"
       }
     },
     "select": {

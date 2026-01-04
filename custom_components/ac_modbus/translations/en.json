@@ -58,6 +58,14 @@
     "sensor": {
       "mode": {
         "name": "AC Mode"
+      },
+      "filter_days_remaining": {
+        "name": "Filter Days Remaining"
+      }
+    },
+    "button": {
+      "filter_reset": {
+        "name": "Filter Replaced"
       }
     },
     "select": {

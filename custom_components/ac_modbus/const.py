@@ -42,7 +42,12 @@ MIN_POLL_INTERVAL: Final = 5  # seconds
 MAX_SCAN_RANGE: Final = 100  # registers
 
 # Platforms
-PLATFORMS: Final = ["switch", "select", "sensor"]
+PLATFORMS: Final = ["switch", "select", "sensor", "button"]
+
+# Filter replacement tracking
+FILTER_CYCLE_DAYS: Final = 90  # Days between filter replacements
+FILTER_STORAGE_KEY: Final = "ac_modbus.filter"
+FILTER_STORAGE_VERSION: Final = 1
 
 # Services
 SERVICE_WRITE_REGISTER: Final = "write_register"

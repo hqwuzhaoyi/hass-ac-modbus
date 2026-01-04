@@ -8,6 +8,9 @@ from typing import TYPE_CHECKING, Any
 
 from .const import (
     DEFAULT_POLL_INTERVAL,
+    FILTER_CYCLE_DAYS,
+    FILTER_STORAGE_KEY,
+    FILTER_STORAGE_VERSION,
     REGISTER_HOME_AWAY,
     REGISTER_HUMIDIFY,
     REGISTER_MODE,
@@ -272,3 +275,117 @@ if HAS_HOMEASSISTANT:
             if self.data is None:
                 return None
             return self.data.get(address)
+
+
+class FilterDataManager:
+    """Manager for filter replacement data persistence and calculations.
+
+    Handles storage of filter replacement dates and calculates
+    days remaining until next replacement.
+    """
+
+    def __init__(self, hass: HomeAssistant) -> None:
+        """Initialize the filter data manager.
+
+        Args:
+            hass: Home Assistant instance.
+        """
+        from homeassistant.helpers.storage import Store
+        from homeassistant.util import dt as dt_util
+
+        self._hass = hass
+        self._store: Store = Store(
+            hass, FILTER_STORAGE_VERSION, FILTER_STORAGE_KEY
+        )
+        self._last_replacement: datetime | None = None
+        self._dt_util = dt_util
+        self._listeners: list[Any] = []
+
+    @property
+    def last_replacement(self) -> datetime | None:
+        """Return the last replacement datetime."""
+        return self._last_replacement
+
+    @property
+    def next_replacement(self) -> datetime | None:
+        """Return the next replacement datetime."""
+        if self._last_replacement is None:
+            return None
+        from datetime import timedelta
+
+        return self._last_replacement + timedelta(days=FILTER_CYCLE_DAYS)
+
+    @property
+    def days_remaining(self) -> int:
+        """Calculate days remaining until next filter replacement.
+
+        Returns:
+            Positive if not due, negative if overdue, 0 if due today.
+        """
+        if self._last_replacement is None:
+            return FILTER_CYCLE_DAYS
+
+        next_date = self.next_replacement
+        if next_date is None:
+            return FILTER_CYCLE_DAYS
+
+        now = self._dt_util.now()
+        delta = next_date - now
+        return delta.days
+
+    async def async_load(self) -> None:
+        """Load filter data from storage."""
+        data = await self._store.async_load()
+
+        if data is None:
+            # First install - assume filter was just replaced
+            _LOGGER.info("No filter data found, initializing with current date")
+            self._last_replacement = self._dt_util.now()
+            await self.async_save()
+        else:
+            try:
+                last_replacement_str = data.get("last_replacement")
+                if last_replacement_str:
+                    self._last_replacement = datetime.fromisoformat(
+                        last_replacement_str
+                    )
+                    _LOGGER.debug(
+                        "Loaded filter last replacement: %s",
+                        self._last_replacement,
+                    )
+                else:
+                    self._last_replacement = self._dt_util.now()
+                    await self.async_save()
+            except (ValueError, TypeError) as ex:
+                _LOGGER.warning(
+                    "Invalid filter data, resetting to current date: %s", ex
+                )
+                self._last_replacement = self._dt_util.now()
+                await self.async_save()
+
+    async def async_save(self) -> None:
+        """Save filter data to storage."""
+        if self._last_replacement is None:
+            return
+
+        data = {"last_replacement": self._last_replacement.isoformat()}
+        await self._store.async_save(data)
+        _LOGGER.debug("Saved filter last replacement: %s", self._last_replacement)
+
+    async def async_reset(self) -> None:
+        """Reset filter replacement date to now."""
+        self._last_replacement = self._dt_util.now()
+        await self.async_save()
+        _LOGGER.info("Filter replacement date reset to: %s", self._last_replacement)
+        # Notify listeners
+        for listener in self._listeners:
+            listener()
+
+    def add_listener(self, listener: Any) -> None:
+        """Add a listener to be notified on data changes."""
+        self._listeners.append(listener)
+
+    def remove_listener(self, listener: Any) -> None:
+        """Remove a listener."""
+        if listener in self._listeners:
+            self._listeners.remove(listener)
